@@ -1,0 +1,3 @@
+"An under-raise happens when a player goes all in and in doing so has raised the bet but not by the full amount necessary. When this happens the betting becomes ‘locked’. Any players that have already acted in the hand (called, checked, bet etc) may not re-raise. Any players that have not yet acted may raise as normal if they wish."
+
+If you're playing 10/20 NL and you check, then a guy goes all-in for 15, you can't now check-raise. However, if you're playing 10/20, and you check, then a guy bets 25, then another guy goes all-in for 40, you can still check-raise (because the guy that raised to 40 re-opened the action for you. If you now call, then this guy may not raise anymore)
