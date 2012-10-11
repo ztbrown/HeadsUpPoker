@@ -1,8 +1,8 @@
 public interface Robot
 {
-	public void initializeHand(TableInfo gameInfo);
+	public void initializeHand();
 
-	public String go(TableInfo actionInfo);
+	public String go();
 	
-	public String update(TableInfo opponentInfo);
+	public void update();
 }

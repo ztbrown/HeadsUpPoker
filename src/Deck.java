@@ -26,6 +26,19 @@ public class Deck
 	
 	
 	/**
+	 * Refreshes the deck such that it is a shuffled deck of 52 cards again
+	 */
+	public void resetDeck()
+	{
+		cardOrder = new ArrayList<Integer>();
+		for(int i = 0; i < 52; i++)
+			cardOrder.add(i);
+		
+		Collections.shuffle(cardOrder);
+	}
+	
+	
+	/**
 	 * Pushes and returns the next card from the deck.
 	 */
 	public Card nextCard()

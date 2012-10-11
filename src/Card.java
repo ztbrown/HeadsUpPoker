@@ -9,21 +9,11 @@ public class Card
 	
 	
 	/**
-	 * Creates a card object using the given String. For example "6s" or "Kd"
-	 */
-	/*
-	public Card(String cardString)
-	{
-		...
-	}
-	*/
-	
-	/**
 	 * Creates a card object based on a number between 0 and 51
 	 */
-	public Card(int number)
+	public Card(int num)
 	{
-		this.number = number;
+		number = num;
 		int findSuit = number / 13;
 		switch(findSuit)
 		{
@@ -79,5 +69,41 @@ public class Card
 	public CardSuit getSuit()
 	{
 		return suit;
+	}
+	
+	
+	/**
+	 * Returns a String representation of this card
+	 */
+	public String toString()
+	{
+		String str = null;
+		int findHeight = number % 13;
+		switch(findHeight)
+		{
+			case 0 : str = "2"; break;
+			case 1 : str = "3"; break;
+			case 2 : str = "4"; break;
+			case 3 : str = "5"; break;
+			case 4 : str = "6"; break;
+			case 5 : str = "7"; break;
+			case 6 : str = "8"; break;
+			case 7 : str = "9"; break;
+			case 8 : str = "T"; break;
+			case 9 : str = "J"; break;
+			case 10 : str = "Q"; break;
+			case 11 : str = "K"; break;
+			case 12 : str = "A";
+		}
+		int findSuit = number / 13;
+		switch(findSuit)
+		{
+			case 0 : str += "s"; break;
+			case 1 : str += "h"; break;
+			case 2 : str += "c"; break;
+			default : str += "d";
+		}		
+		
+		return str;
 	}
 }
