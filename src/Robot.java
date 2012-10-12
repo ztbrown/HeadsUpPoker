@@ -1,8 +1,10 @@
-public interface Robot
-{
-	public void initializeHand();
 
-	public String go();
+public interface Robot {
+
+	public void writeMove(PokerMove move);
 	
-	public void update();
+	public PokerMove getMove(long timeOut);
+
+	public void writeInfo(MatchInfo info);
+	
 }

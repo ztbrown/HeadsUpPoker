@@ -10,27 +10,27 @@ public class TestBotRandom implements Robot
 	}
 
 	@Override
-	public void initializeHand()
+	public void writeInfo(MatchInfo info)
 	{
 		
 	}
 
 	@Override
-	public String go()
+	public PokerMove getMove(long timeOut)
 	{
 		Random r = new Random();
 		int next = r.nextInt(5);
 		int amount = 50*(2 + r.nextInt(4));
 		if(next == 0)
-			return "check,0";
+			return new PokerMove("check", 0);
 		if(next == 1 || next == 2)
-			return "call,0";
+			return new PokerMove("call", 0);
 		else
-			return "raise,"+ amount;
+			return new PokerMove("raise", amount);
 	}
 
 	@Override
-	public void update()
+	public void writeMove(PokerMove move)
 	{
 		
 	}

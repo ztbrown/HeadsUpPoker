@@ -10,7 +10,7 @@ import java.util.Map.Entry;
  */
 public class Pot
 {
-	private Map<Robot, Integer> botBetSizes;
+	private Map<PokerBot, Integer> botBetSizes;
 	private int totalPot;
 	
 	
@@ -18,10 +18,10 @@ public class Pot
 	 * Creates a Pot object, used for keeping track of the pot for a specific hand.
 	 * @param bots : integer array of bot IDs that play in the current hand
 	 */
-	public Pot(Collection<Robot> bots)
+	public Pot(Collection<PokerBot> bots)
 	{
-		botBetSizes = new HashMap<Robot, Integer>();
-		Iterator<Robot> botIterator = bots.iterator();
+		botBetSizes = new HashMap<PokerBot, Integer>();
+		Iterator<PokerBot> botIterator = bots.iterator();
 		while(botIterator.hasNext())
 			botBetSizes.put(botIterator.next(), 0);
 		
@@ -32,7 +32,7 @@ public class Pot
 	/**
 	 * Stores the bet of a bot.
 	 */
-	public void addBet(Robot bot, int size)
+	public void addBet(PokerBot bot, int size)
 	{
 		botBetSizes.put(bot, botBetSizes.get(bot) + size);
 		totalPot += size;
@@ -46,15 +46,15 @@ public class Pot
 	 * @param maxSize : the maximal amount of chips per players bet that goes to this winner, any value <= 0 is
 	 * interpreted as an unrestricted amount that may go to this player.
 	 */
-	public int getWinnersPot(Robot bot, int maxSize)
+	public int getWinnersPot(PokerBot bot, int maxSize)
 	{
 		int winnersBet = botBetSizes.get(bot);
 		if(maxSize > 0 && maxSize < winnersBet)
 			winnersBet = maxSize;
 		int winnersPot = 0;
-		for (Entry<Robot, Integer> entry : botBetSizes.entrySet())
+		for (Entry<PokerBot, Integer> entry : botBetSizes.entrySet())
 		{
-		    Robot key = entry.getKey();
+		    PokerBot key = entry.getKey();
 		    Integer value = entry.getValue();
 		    
 		    // If a player put in more chips than the winning player
@@ -84,7 +84,7 @@ public class Pot
 	 * @param bot1 : The first winning bot
 	 * @param bot2 : The second winning bot
 	 */
-	public int[] getTwoWinnersPot(Robot bot1, Robot bot2)
+	public int[] getTwoWinnersPot(PokerBot bot1, PokerBot bot2)
 	{
 		int difference = botBetSizes.get(bot1) - botBetSizes.get(bot2);
 		int[] botPots = new int[2];

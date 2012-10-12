@@ -8,19 +8,19 @@ public class TestBotCheckCaller implements Robot
 	}
 
 	@Override
-	public void initializeHand()
+	public void writeInfo(MatchInfo info)
 	{
 		
 	}
 
 	@Override
-	public String go()
+	public PokerMove getMove(long timeOut)
 	{
-		return "call,0";
+		return new PokerMove("call", 0);
 	}
 
 	@Override
-	public void update()
+	public void writeMove(PokerMove move)
 	{
 		
 	}

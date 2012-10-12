@@ -1,13 +1,16 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Vector;
 import com.stevebrecher.HandEval;
 
+/**
+ * Class that is the engine for playing a game of poker at one table. It regulates all the actions and information
+ * needed for playing a match, including the communication with the involved bots.
+ */
 public class MatchPlayer {
 
 	private int handNumber;
-	private ArrayList<Robot> bots;
+	private ArrayList<PokerBot> bots;
 	private int numberOfBots;
 	private Deck deck;
 	private Pot pot;
@@ -16,6 +19,7 @@ public class MatchPlayer {
 	private Hand[] botHands;
 	private String handHistory;
 	private int[] botStacks;
+	private long[] botTimeBanks;
 	private int buttonSeat;
 	private int activeSeat;
 	private int lastToActSeat;
@@ -29,6 +33,9 @@ public class MatchPlayer {
 	private int[] botBetsThisRound;
 	private int[] botGainLoss;
 	
+	private final long TIME_PER_MOVE = 1000l;
+	private final long TIMEBANK_MAX = 10000l;
+	
 	
 	/**
 	* Setup a table with the given bots, so that a match can be played.
@@ -38,15 +45,19 @@ public class MatchPlayer {
 	* @param SB : the size of the small blind
 	* @param tournamentMode : whether it is a tournament or not
 	*/
-	public MatchPlayer(Collection<Robot> botList, int stack, int BB, int SB, boolean tournamentMode)
+	public MatchPlayer(Collection<PokerBot> botList, int stack, int BB, int SB, boolean tournamentMode)
 	{
 		handNumber = 0;
-		bots = new ArrayList<Robot>(botList);
+		bots = new ArrayList<PokerBot>(botList);
 		numberOfBots = botList.size();
 		sizeStartStack = stack;
 		botStacks = new int[numberOfBots];
+		botTimeBanks = new long[numberOfBots];
 		for(int i = 0; i < numberOfBots; i++)
+		{
 			botStacks[i] = sizeStartStack;
+			botTimeBanks[i] = TIMEBANK_MAX;
+		}
 		
 		sizeBB = BB;
 		sizeSB = SB;
@@ -155,9 +166,9 @@ public class MatchPlayer {
 		
 		//System.out.println("Stack bot 0: " + botStacks[0]);
 		//System.out.println("Stack bot 1: " + botStacks[1]);
-		handHistory += "\nMatch Hand " + handNumber;
-		handHistory += "\nBot_0 Stack " + botStacks[0];
-		handHistory += "\nBot_1 Stack " + botStacks[1];
+		handHistory += String.format("\nMatch hand %d", handNumber);
+		handHistory += String.format("\n%s stack %d", bots.get(0).getName(), botStacks[0]);
+		handHistory += String.format("\n%s stack %d", bots.get(1).getName(), botStacks[1]);
 	}
 	
 	
@@ -232,11 +243,27 @@ public class MatchPlayer {
 	{
 		if(botStacks[activeSeat] > 0 && isInvolvedInHand[activeSeat])
 		{
+			long startTime = System.currentTimeMillis();
+			PokerMove nextMove = (new BotAction()).getMove(bots.get(activeSeat).getBot(), botTimeBanks[activeSeat]);
+			long timeElapsed = System.currentTimeMillis() - startTime;
+			
+			// update the timebank of the current bot with the elapsed time and increment it for the next move
+			botTimeBanks[activeSeat] = Math.max(botTimeBanks[activeSeat] - timeElapsed, 0);
+			botTimeBanks[activeSeat] = Math.min(botTimeBanks[activeSeat] + TIME_PER_MOVE, TIMEBANK_MAX);
+			
+			String botActionString;
+			if(nextMove == null)
+			{
+				botActionString = "check 0";
+				System.err.println(bots.get(activeSeat).getName() + " did not act in time, action set to \"check\"");
+			}
+			else
+				botActionString = nextMove.toString();
+		
 			int amountToCall = sizeCurrentRaise - botBetsThisRound[activeSeat];
-			String botActionString = bots.get(activeSeat).go(); 	// todo
-			String[] botActionSubStrings = botActionString.split(",");
-			String botAction = botActionSubStrings[0];
-			int botActionAmount = Integer.parseInt(botActionSubStrings[1]);
+			String[] botActionSubStrings = botActionString.split(" ");
+			String botAction = botActionSubStrings[1];
+			int botActionAmount = Integer.parseInt(botActionSubStrings[2]);
 			
 			// Handle invalid / unlogical actions
 			if(botStacks[1 - activeSeat] == 0 && botAction.equals("raise"))
@@ -306,11 +333,13 @@ public class MatchPlayer {
 			}
 			
 			// send a message to all other bots about the action
-			handHistory += "\nBot_" + activeSeat + " " + botAction + " " + botActionAmount;
+			handHistory += String.format("\n%s %s %d", bots.get(activeSeat).getName(), botAction, botActionAmount);
 			//System.out.println("|_| Total pot size: " + pot.getCurrentPotSize());
+			PokerMove move = new PokerMove(botAction, botActionAmount);
+			move.setPlayer(bots.get(activeSeat).getName());
 			for(int i = 0; i < numberOfBots; i++)
 				if(isInvolvedInMatch[i] && i != activeSeat)
-					bots.get(i).update();		//todo
+					bots.get(i).getBot().writeMove(move);
 		}
 	}
 	
@@ -336,12 +365,16 @@ public class MatchPlayer {
 			Card card1 = deck.nextCard();
 			Card card2 = deck.nextCard();
 			botHands[i] = new Hand(card1, card2);
-			handHistory += "\nBot_" + i + " Hand " + botHands[i].toString();
+			handHistory += String.format("\n%s hand %s", bots.get(i).getName(), botHands[i].toString());
 			//System.out.println("Bot " + i + " hand: " + botHands[i].toString());
 		}
 	
+		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString());
 		for(int i = 0; i < numberOfBots; i++)
-			bots.get(i).initializeHand();		//todo
+		{
+			info.setCurrentBotSeat(bots.get(i));
+			bots.get(i).getBot().writeInfo(info);
+		}
 	}
 	
 	
@@ -364,13 +397,14 @@ public class MatchPlayer {
 			tableCards.add(newCard);
 		}
 		
-		String table = "Match Table [" + tableCards.get(0).toString();
+		String table = "Match table [" + tableCards.get(0).toString();
 		for(int i = 1; i < tableCards.size(); i++)
 			table += "," + tableCards.get(i).toString();
 		table += "]";
 		//System.out.println(table + "]");
+		if(!handHistory.endsWith("]"))
+			handHistory += "\nMatch pot " + pot.getCurrentPotSize();
 		handHistory += "\n" + table;
-		handHistory += "\nMatch Pot " + pot.getCurrentPotSize();
 		
 		return true;
 	}
@@ -388,13 +422,13 @@ public class MatchPlayer {
 			nextBotActive();
 		botBetsThisRound[activeSeat] = placeBet(sizeSB);		
 		//System.out.println("Bot " + activeSeat + " pays SB of " + botBetsThisRound[activeSeat]);
-		handHistory += "\nBot_" + activeSeat + " Blind " + botBetsThisRound[activeSeat];
+		handHistory += String.format("\n%s sb %s", bots.get(activeSeat).getName(), botBetsThisRound[activeSeat]);
 		
 		// the bot behind the small blind pays the big blind
 		nextBotActive();
 		botBetsThisRound[activeSeat] = placeBet(sizeBB);
 		//System.out.println("Bot " + activeSeat + " pays BB of " + botBetsThisRound[activeSeat]);
-		handHistory += "\nBot_" + activeSeat + " Blind " + botBetsThisRound[activeSeat];
+		handHistory += String.format("\n%s bb %s", bots.get(activeSeat).getName(), botBetsThisRound[activeSeat]);
 	}
 	
 	
@@ -480,9 +514,9 @@ public class MatchPlayer {
 		botStacks[0] += botPots[0];
 		botStacks[1] += botPots[1];
 		if(botPots[0] > 0)
-			handHistory += "\nBot_0 wins " + botPots[0];
+			handHistory += String.format("\n%s wins %d", bots.get(0).getName(), botPots[0]);
 		if(botPots[1] > 0)
-			handHistory += "\nBot_1 wins " + botPots[1]; 
+			handHistory += String.format("\n%s wins %d", bots.get(1).getName(), botPots[1]);
 	}
 	
 	

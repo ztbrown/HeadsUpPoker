@@ -8,19 +8,19 @@ public class TestBotRaiser implements Robot
 	}
 
 	@Override
-	public void initializeHand()
+	public void writeInfo(MatchInfo info)
 	{
 		
 	}
 
 	@Override
-	public String go()
+	public PokerMove getMove(long timeOut)
 	{
-		return "raise,100";
+		return new PokerMove("raise", 100);
 	}
 
 	@Override
-	public void update()
+	public void writeMove(PokerMove move)
 	{
 		
 	}
