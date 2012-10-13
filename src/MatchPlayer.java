@@ -87,6 +87,12 @@ public class MatchPlayer {
 	 */
 	public void runMatch()
 	{
+		handHistory += "Settings gameType NLH";
+		handHistory += "\nSettings timeBank " + TIMEBANK_MAX;
+		handHistory += "\nSettings timeTurn " + TIME_PER_MOVE;
+		handHistory += "\nSettings players " + numberOfBots;
+		for(int i = 0; i < numberOfBots; i++)
+			handHistory += String.format("\nSettings seat%d %s", i, bots.get(i).getName());
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
 			playHand();
