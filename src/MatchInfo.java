@@ -5,21 +5,23 @@ public class MatchInfo
 	private int round;
 	private ArrayList<PokerBot> bots;
 	private int[] botStacks;
-	private String table;
 	private int sizeBB, sizeSB;
 	private int mySeat;
+	private String myHand;
 	private int buttonSeat;
+	private String table;
 	
-	public MatchInfo(int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize, int button, String tableCards)
+	public MatchInfo(int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize,
+					 int button, String tableCards)
 	{
 		round = roundNumber;
 		bots = botList;
 		botStacks = stacks;
-		table = tableCards;
 		sizeBB = bigBlindSize;
 		sizeSB = smallBlindSize;
 		mySeat = -1;
 		buttonSeat = button;
+		table = tableCards;
 	}
 	
 	
@@ -27,7 +29,7 @@ public class MatchInfo
 	 * Sets on which seat the bot is that receives this MatchInfo
 	 * @param botName : the name of the bot
 	 */
-	public void setCurrentBotSeat(PokerBot bot)
+	public void setCurrentBotInfo(PokerBot bot, String hand)
 	{
 		for(int i = 0; i < bots.size(); i++)
 		{
@@ -37,6 +39,7 @@ public class MatchInfo
 				break;
 			}
 		}
+		myHand = hand;
 	}
 	
 	
@@ -45,18 +48,20 @@ public class MatchInfo
 	 */
 	public String toString()
 	{
-		String str = String.format("Match round %d\n", round);
-		str += String.format("Match SB %d\n", sizeSB);
-		str += String.format("Match BB %d\n", sizeBB);
-		str += String.format("Match DB %d\n", buttonSeat);
+		String str = String.format("Match round %d", round);
+		str += String.format("\nMatch smallBlind %d", sizeSB);
+		str += String.format("\nMatch bigBlind %d", sizeBB);
+		str += String.format("\nMatch button %d", buttonSeat);
 		for(int i = 0; i < bots.size(); i++)
 		{
 			if(i != mySeat)
-				str += String.format("%d stack %d\n", bots.get(i).getName(), botStacks[i]);
+				str += String.format("\n%s stack %d", bots.get(i).getName(), botStacks[i]);
 			else
-				str += String.format("You stack %d\n", botStacks[i]);
+				str += String.format("\nYou stack %d", botStacks[i]);
 		}
-		str += String.format("Match table %d", table);
+		str += String.format("\nYou seat %d", mySeat);
+		str += String.format("\nYou hand %s", myHand);
+		str += String.format("\nMatch table %s", table);
 		return str;
 	}
 }

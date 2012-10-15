@@ -12,7 +12,7 @@ public class TestBotRandom implements Robot
 	@Override
 	public void writeInfo(MatchInfo info)
 	{
-		
+
 	}
 
 	@Override
@@ -32,6 +32,6 @@ public class TestBotRandom implements Robot
 	@Override
 	public void writeMove(PokerMove move)
 	{
-		
+
 	}
 }

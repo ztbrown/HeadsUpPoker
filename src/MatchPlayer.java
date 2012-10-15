@@ -374,13 +374,7 @@ public class MatchPlayer {
 			handHistory += String.format("\n%s hand %s", bots.get(i).getName(), botHands[i].toString());
 			//System.out.println("Bot " + i + " hand: " + botHands[i].toString());
 		}
-	
-		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString());
-		for(int i = 0; i < numberOfBots; i++)
-		{
-			info.setCurrentBotSeat(bots.get(i));
-			bots.get(i).getBot().writeInfo(info);
-		}
+		sendMatchInfo();
 	}
 	
 	
@@ -403,14 +397,16 @@ public class MatchPlayer {
 			tableCards.add(newCard);
 		}
 		
-		String table = "Match table [" + tableCards.get(0).toString();
+		String table = "[" + tableCards.get(0).toString();
 		for(int i = 1; i < tableCards.size(); i++)
 			table += "," + tableCards.get(i).toString();
 		table += "]";
+			
+		sendMatchInfo();
 		//System.out.println(table + "]");
 		if(!handHistory.endsWith("]"))
 			handHistory += "\nMatch pot " + pot.getCurrentPotSize();
-		handHistory += "\n" + table;
+		handHistory += "\nMatch table " + table;
 		
 		return true;
 	}
@@ -523,6 +519,21 @@ public class MatchPlayer {
 			handHistory += String.format("\n%s wins %d", bots.get(0).getName(), botPots[0]);
 		if(botPots[1] > 0)
 			handHistory += String.format("\n%s wins %d", bots.get(1).getName(), botPots[1]);
+	}
+	
+	
+	/**
+	 * Sends the match info to all the bots that are playing at this table. This method should be called at the start
+	 * of each new round and at each new bet round.
+	 */
+	private void sendMatchInfo()
+	{
+		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString());
+		for(int i = 0; i < numberOfBots; i++)
+		{
+			info.setCurrentBotInfo(bots.get(i), botHands[i].toString());
+			bots.get(i).getBot().writeInfo(info);
+		}
 	}
 	
 	
