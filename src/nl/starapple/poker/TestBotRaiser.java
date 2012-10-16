@@ -1,8 +1,10 @@
+package nl.starapple.poker;
 
-public class TestBotCheckCaller implements Robot
+
+public class TestBotRaiser implements Robot
 {
 	
-	public TestBotCheckCaller()
+	public TestBotRaiser()
 	{
 		
 	}
@@ -16,7 +18,7 @@ public class TestBotCheckCaller implements Robot
 	@Override
 	public PokerMove getMove(long timeOut)
 	{
-		return new PokerMove("call", 0);
+		return new PokerMove("raise", 100);
 	}
 
 	@Override

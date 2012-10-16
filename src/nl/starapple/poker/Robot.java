@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 
 public interface Robot {
 

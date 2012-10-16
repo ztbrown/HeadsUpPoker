@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 /**
  * Class that represents the action of a bot.
  */

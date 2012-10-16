@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 public class Hand
 {
 	private Card card1, card2;

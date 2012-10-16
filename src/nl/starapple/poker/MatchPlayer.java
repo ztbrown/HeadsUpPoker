@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;

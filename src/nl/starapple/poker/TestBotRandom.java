@@ -1,3 +1,5 @@
+package nl.starapple.poker;
+
 import java.util.Random;
 
 

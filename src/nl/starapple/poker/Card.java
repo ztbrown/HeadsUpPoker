@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 /**
  * A Card class object represents one card
  */

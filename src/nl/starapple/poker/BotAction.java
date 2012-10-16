@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 /**
  * Class that can be used to ask a bot to perform the next action within a certain amount of time. If the time
  * criterium is not met, it will return a null PokerMove.

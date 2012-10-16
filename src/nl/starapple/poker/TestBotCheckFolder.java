@@ -1,3 +1,5 @@
+package nl.starapple.poker;
+
 
 public class TestBotCheckFolder implements Robot
 {

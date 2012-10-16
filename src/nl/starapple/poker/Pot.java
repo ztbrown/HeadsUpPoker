@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;

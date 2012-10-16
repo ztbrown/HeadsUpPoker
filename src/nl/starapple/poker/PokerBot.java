@@ -1,3 +1,4 @@
+package nl.starapple.poker;
 /**
  * Class that represents one Robot object and stores additional information such as the name that the bot receives and
  * which person is the author.
