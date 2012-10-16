@@ -86,7 +86,7 @@ public class MatchPlayer {
 	/**
 	 * Starts the match. Plays hands until one of the bots has no chips left.
 	 */
-	public void runMatch()
+	public int []runMatch()
 	{
 		handHistory += "Settings gameType NLH";
 		handHistory += "\nSettings timeBank " + TIMEBANK_MAX;
@@ -94,11 +94,22 @@ public class MatchPlayer {
 		handHistory += "\nSettings players " + numberOfBots;
 		for(int i = 0; i < numberOfBots; i++)
 			handHistory += String.format("\nSettings seat%d %s", i, bots.get(i).getName());
+        int maxHands = 50;
+        int handsPlayed = 0;
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
 			playHand();
 			writeHistory();
+            if( ++handsPlayed >= maxHands ) { break; }
 		}
+        /*
+        if( botStacks[0] == 0 ) { return new int[] { 2, 1 }; }
+        if( botStacks[1] == 0 ) { return new int[] { 1, 2 }; }
+        return new int[] { 1, 1 };
+        */
+        if( botStacks[0] > botStacks[1] ) { return new int[] { 1, 2 }; }
+        if( botStacks[0] < botStacks[1] ) { return new int[] { 2, 1 }; }
+        return new int[] { 1, 1 };
 	}
 	
 	
