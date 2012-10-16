@@ -10,7 +10,7 @@ public class TestBotRaiser implements Robot
 	}
 
 	@Override
-	public void writeInfo(MatchInfo info)
+	public void writeInfo(HandInfo info)
 	{
 		
 	}
@@ -23,6 +23,18 @@ public class TestBotRaiser implements Robot
 
 	@Override
 	public void writeMove(PokerMove move)
+	{
+		
+	}
+
+	@Override
+	public void writeResult(HandResultInfo info)
+	{
+		
+	}
+
+	@Override
+	public void writeInfo(MatchInfo info)
 	{
 		
 	}

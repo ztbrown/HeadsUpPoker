@@ -1,6 +1,6 @@
 package nl.starapple.poker;
 
-public enum MatchInfoType
+public enum HandInfoType
 {
 	HandStart, NewBetRound;
 }

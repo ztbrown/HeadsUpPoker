@@ -6,6 +6,9 @@ public interface Robot {
 	
 	public PokerMove getMove(long timeOut);
 
+	public void writeInfo(HandInfo info);
+
 	public void writeInfo(MatchInfo info);
 	
+	void writeResult(HandResultInfo info);
 }

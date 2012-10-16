@@ -8,8 +8,9 @@ import com.stevebrecher.HandEval;
  * Class that is the engine for playing a game of poker at one table. It regulates all the actions and information
  * needed for playing a match, including the communication with the involved bots.
  */
-public class MatchPlayer {
-
+public class MatchPlayer
+{
+	private String gameType;
 	private int handNumber;
 	private int blindLevel;
 	private ArrayList<PokerBot> bots;
@@ -49,8 +50,9 @@ public class MatchPlayer {
 	* @param SB : the size of the small blind
 	* @param tournamentMode : whether it is a tournament or not
 	*/
-	public MatchPlayer(Collection<PokerBot> botList, boolean tournamentMode)
+	public MatchPlayer(Collection<PokerBot> botList, String typeOfGame, boolean tournamentMode)
 	{
+		gameType = typeOfGame;
 		handNumber = 0;
 		blindLevel = 0;
 		bots = new ArrayList<PokerBot>(botList);
@@ -91,12 +93,14 @@ public class MatchPlayer {
 	 */
 	public int[] runMatch()
 	{
-		handHistory += "Settings gameType NLH";
+		handHistory += "Settings gameType " + gameType;
 		handHistory += "\nSettings timeBank " + TIMEBANK_MAX;
 		handHistory += "\nSettings timeTurn " + TIME_PER_MOVE;
 		handHistory += "\nSettings players " + numberOfBots;
 		for(int i = 0; i < numberOfBots; i++)
 			handHistory += String.format("\nSettings seat%d %s", i, bots.get(i).getName());
+		
+		sendMatchInfo();
 		
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
@@ -384,7 +388,7 @@ public class MatchPlayer {
 			handHistory += String.format("\n%s hand %s", bots.get(i).getName(), botHands[i].toString());
 			//System.out.println("Bot " + i + " hand: " + botHands[i].toString());
 		}
-		sendMatchInfo(MatchInfoType.HandStart);
+		sendHandInfo(HandInfoType.HandStart);
 	}
 	
 	
@@ -412,7 +416,7 @@ public class MatchPlayer {
 			table += "," + tableCards.get(i).toString();
 		table += "]";
 			
-		sendMatchInfo(MatchInfoType.NewBetRound);
+		sendHandInfo(HandInfoType.NewBetRound);
 		//System.out.println(table + "]");
 		if(!handHistory.endsWith("]"))
 			handHistory += "\nMatch pot " + pot.getCurrentPotSize();
@@ -512,7 +516,7 @@ public class MatchPlayer {
 				//System.out.println("> result: bot " + winnerSeat + " wins the pot");
 			}
 			
-			
+			sendResultInfo(botPots, true);
 		}
 		// No showdown, one of the bots folded, so the other bot gets the whole pot
 		else
@@ -522,6 +526,7 @@ public class MatchPlayer {
 				winnerSeat = 1;
 
 			botPots[winnerSeat] = pot.getWinnersPot(bots.get(winnerSeat), 0);
+			sendResultInfo(botPots, false);
 			//System.out.println("> result: bot " + winnerSeat + " wins the pot");
 		}
 		
@@ -536,15 +541,31 @@ public class MatchPlayer {
 	
 	/**
 	 * Sends the match info to all the bots that are playing at this table. This method should be called at the start
+	 * of a new match.
+	 */
+	private void sendMatchInfo()
+	{
+		MatchInfo info = new MatchInfo(bots, gameType, isTournament, TIMEBANK_MAX, TIME_PER_MOVE,
+									   HANDS_PER_BLINDLEVEL);		
+		for(int i = 0; i < numberOfBots; i++)
+		{
+			info.setCurrentBotInfo(bots.get(i));
+			bots.get(i).getBot().writeInfo(info);
+		}
+	}
+	
+	
+	/**
+	 * Sends the hand info to all the bots that are playing at this table. This method should be called at the start
 	 * of each new round and at each new bet round.
 	 */
-	private void sendMatchInfo(MatchInfoType type)
+	private void sendHandInfo(HandInfoType type)
 	{
-		MatchInfo info = new MatchInfo(type, handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
+		HandInfo info = new HandInfo(type, handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
 									   tableCards.toString().replaceAll("\\s", ""), pot.getCurrentPotSize());
 		for(int i = 0; i < numberOfBots; i++)
 		{
-			info.setCurrentBotInfo(bots.get(i), botHands[i].toString());
+			info.setCurrentBotInfo(bots.get(i), botHands[i]);
 			bots.get(i).getBot().writeInfo(info);
 		}
 	}
@@ -561,6 +582,26 @@ public class MatchPlayer {
 		move.setPlayer(bots.get(activeSeat).getName());
 		for(int i = 0; i < numberOfBots; i++)
 			bots.get(i).getBot().writeMove(move);
+	}
+	
+	
+	/**
+	 * Sends a message to all bots about the result of the hand, thus how the pot is distributed, and in case of a
+	 * showdown it also provides the hands of the winners.
+	 * @param potDivision : array with the amount of the pot that each bot gets
+	 * @param showdown : whether there is a showdown or not
+	 */
+	private void sendResultInfo(int[] potDivision, boolean showdown)
+	{
+		HandResultInfo resultInfo = new HandResultInfo(bots, potDivision);
+		if(showdown)
+		{
+			for(int i = 0; i < numberOfBots; i++)
+				if(isInvolvedInHand[i])
+					resultInfo.setBotHand(bots.get(i), botHands[i]);
+		}
+		for(int i = 0; i < numberOfBots; i++)
+			bots.get(i).getBot().writeResult(resultInfo);
 	}
 	
 	

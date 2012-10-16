@@ -11,7 +11,7 @@ public class EngineTester {
 		Collection<PokerBot> bots = new ArrayList<PokerBot>();
 		bots.add(pbot1);
 		bots.add(pbot2);
-		MatchPlayer engine = new MatchPlayer(bots, true);
+		MatchPlayer engine = new MatchPlayer(bots, "NLH", true);
 		engine.runMatch();
 	}
 }
