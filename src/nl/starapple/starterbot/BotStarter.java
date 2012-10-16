@@ -7,6 +7,7 @@ public class BotStarter implements Bot {
 
 	@Override
 	public PokerMove getMove(PokerState state, Long timeOut) {
+		System.err.printf("opponent action is %s (%d)\n", state.getOpponentAction(), state.getCurrentBet());
 		Hand hand = state.getHand();
 		int height1 = hand.getCard1().getHeight().ordinal();
 		int height2 = hand.getCard1().getHeight().ordinal();

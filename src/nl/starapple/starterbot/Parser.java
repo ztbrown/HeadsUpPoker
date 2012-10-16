@@ -28,6 +28,9 @@ public class Parser {
 			} else if( parts.length == 3 && parts[0].equals("Match") ) {
 				// update PokerState
 				currentState.updateMatch(parts[1], parts[2]);
+			} else if( parts.length == 3 && parts[0].equals("Settings") ) {
+				// update settings
+				currentState.updateSetting(parts[1], parts[2]);
 			} else if( parts.length == 3 ) {
 				// assume it's ``botX y z''
 				// also update PokerState
