@@ -2,6 +2,7 @@ package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
+
 import com.stevebrecher.HandEval;
 
 /**
@@ -356,8 +357,7 @@ public class MatchPlayer {
 			PokerMove move = new PokerMove(botAction, botActionAmount);
 			move.setPlayer(bots.get(activeSeat).getName());
 			for(int i = 0; i < numberOfBots; i++)
-				if(isInvolvedInMatch[i] && i != activeSeat)
-					bots.get(i).getBot().writeMove(move);
+				bots.get(i).getBot().writeMove(move);
 		}
 	}
 	
