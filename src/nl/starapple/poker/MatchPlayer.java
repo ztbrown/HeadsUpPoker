@@ -270,19 +270,15 @@ public class MatchPlayer {
 			botTimeBanks[activeSeat] = Math.max(botTimeBanks[activeSeat] - timeElapsed, 0);
 			botTimeBanks[activeSeat] = Math.min(botTimeBanks[activeSeat] + TIME_PER_MOVE, TIMEBANK_MAX);
 			
-			String botActionString;
 			if(nextMove == null)
 			{
-				botActionString = "check 0";
+				nextMove = new PokerMove("check", 0);
 				System.err.println(bots.get(activeSeat).getName() + " did not act in time, action set to \"check\"");
 			}
-			else
-				botActionString = nextMove.toString();
 		
 			int amountToCall = sizeCurrentRaise - botBetsThisRound[activeSeat];
-			String[] botActionSubStrings = botActionString.split(" ");
-			String botAction = botActionSubStrings[1];
-			int botActionAmount = Integer.parseInt(botActionSubStrings[2]);
+			String botAction = nextMove.getAction();
+			int botActionAmount = nextMove.getAmount();
 			
 			// Handle invalid / unlogical actions
 			if(botStacks[1 - activeSeat] == 0 && botAction.equals("raise"))
