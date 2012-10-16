@@ -540,7 +540,7 @@ public class MatchPlayer {
 	 */
 	private void sendMatchInfo()
 	{
-		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString());
+		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString().replaceAll("\\s", ""));
 		for(int i = 0; i < numberOfBots; i++)
 		{
 			info.setCurrentBotInfo(bots.get(i), botHands[i].toString());
