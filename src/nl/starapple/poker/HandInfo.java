@@ -59,7 +59,7 @@ public class HandInfo
 		if(infoType.equals(HandInfoType.HandStart))
 		{
 			str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
-			str += String.format("%s hand %s\n", bots.get(buttonSeat).getName(), myHand.toString());
+			str += String.format("%s hand %s\n", myBot.getName(), myHand.toString());
 		}
 		str += String.format("Match pot %d\n", pot);
 		str += String.format("Match table %s", table);
