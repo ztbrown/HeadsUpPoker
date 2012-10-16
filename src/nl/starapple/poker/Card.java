@@ -1,4 +1,8 @@
 package nl.starapple.poker;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A Card class object represents one card
  */
@@ -43,7 +47,19 @@ public class Card
 		}
 	}
 	
-	
+	private static Map<String,Card> stringToCard;
+	public static Card getCard(String string) {
+		if( stringToCard == null ) {
+			stringToCard = new HashMap<String,Card>();
+			for( int i = 0; i < 52; ++i ) {
+				Card card = new Card(i);
+				stringToCard.put(card.toString(), card);
+			}
+		}
+		return stringToCard.get(string);
+	}
+
+
 	/**
 	 * Returns the number of the card as a long, with a 1 on t
 	 */
