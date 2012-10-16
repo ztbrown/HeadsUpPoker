@@ -32,7 +32,7 @@ public class PokerState {
 	
 	protected void updateSetting(String key, String value) {
 		settings.put(key, value);
-		if( key.equals("yourName") ) {
+		if( key.equals("yourBot") ) {
 			myName = value;
 		}
 	}
