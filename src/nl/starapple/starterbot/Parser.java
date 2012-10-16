@@ -18,7 +18,8 @@ public class Parser {
 	public void run() {
 		PokerState currentState = new PokerState();
 		while( scan.hasNextLine() ) {
-			String line = scan.nextLine();
+			String line = scan.nextLine().trim();
+			if( line.length() == 0 ) { continue; }
 			String[] parts = line.split("\\s+");
 			if( parts.length == 2 && parts[0].equals("go") ) {
 				// we need to move

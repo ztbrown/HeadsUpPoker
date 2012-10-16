@@ -56,7 +56,7 @@ public class PokerState {
 	}
 
 	protected void updateMove(String bot, String move, String amount) {
-		if( bot.equals("You") ) {
+		if( bot.equals(myName) ) {
 			if( move.equals("stack") ) {
 				yourStack = Integer.valueOf(amount);
 			} else if( move.equals("seat") ) {
