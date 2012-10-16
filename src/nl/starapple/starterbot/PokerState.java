@@ -9,6 +9,8 @@ public class PokerState {
 	
 	private int yourStack, opponentStack;
 	
+	private int pot;
+	
 	private String opponentAction;
 	
 	private int currentBet;
@@ -26,6 +28,8 @@ public class PokerState {
 			bigBlind = Integer.valueOf(value);
 		} else if( key.equals("button") ) {
 			button = Integer.valueOf(value);
+		} else if( key.equals("pot") ) {
+			pot = Integer.valueOf(value);
 		} else if( key.equals("table") ) {
 			table = parseCards(value);
 		} else {
@@ -99,6 +103,10 @@ public class PokerState {
 
 	public int getOpponentStack() {
 		return opponentStack;
+	}
+	
+	public int getPot() {
+		return pot;
 	}
 	
 	public String getOpponentAction() {
