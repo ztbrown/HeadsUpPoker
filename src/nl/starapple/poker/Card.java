@@ -11,7 +11,8 @@ public class Card
 	private CardHeight height;
 	private CardSuit suit;
 	private int number;
-	
+	private static Map<String,Card> stringToCard;
+
 	
 	/**
 	 * Creates a card object based on a number between 0 and 51
@@ -47,11 +48,20 @@ public class Card
 		}
 	}
 	
-	private static Map<String,Card> stringToCard;
-	public static Card getCard(String string) {
-		if( stringToCard == null ) {
+	
+	
+	/**
+	 * Returns the Card object that corresponds with the given card string. The first time this method is called, a
+	 * map of all Cards corresponding with correct input strings is created.
+	 * @param string : the string to be converted to a Card
+	 */
+	public static Card getCard(String string)
+	{
+		if(stringToCard == null)
+		{
 			stringToCard = new HashMap<String,Card>();
-			for( int i = 0; i < 52; ++i ) {
+			for(int i = 0; i < 52; ++i)
+			{
 				Card card = new Card(i);
 				stringToCard.put(card.toString(), card);
 			}
