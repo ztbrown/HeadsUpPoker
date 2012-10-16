@@ -71,7 +71,7 @@ public class Card
 
 
 	/**
-	 * Returns the number of the card as a long, with a 1 on t
+	 * Returns the number of the card as a long.
 	 */
 	public long getNumber()
 	{
@@ -82,7 +82,7 @@ public class Card
 	
 	
 	/**
-	 * Returns the height of this card
+	 * Returns the height of this card.
 	 */
 	public CardHeight getHeight()
 	{
@@ -91,7 +91,7 @@ public class Card
 	
 	
 	/**
-	 * Returns the suit of this card
+	 * Returns the suit of this card.
 	 */
 	public CardSuit getSuit()
 	{
@@ -100,7 +100,7 @@ public class Card
 	
 	
 	/**
-	 * Returns a String representation of this card
+	 * Returns a String representation of this card.
 	 */
 	public String toString()
 	{

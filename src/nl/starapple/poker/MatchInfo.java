@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 public class MatchInfo
 {
+	private MatchInfoType infoType;
 	private int round;
 	private ArrayList<PokerBot> bots;
 	private int[] botStacks;
@@ -13,9 +14,10 @@ public class MatchInfo
 	private String table;
 	private int pot;
 	
-	public MatchInfo(int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize,
+	public MatchInfo(MatchInfoType type, int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize,
 					 int button, String tableCards, int potSize)
 	{
+		infoType = type;
 		round = roundNumber;
 		bots = botList;
 		botStacks = stacks;
@@ -51,21 +53,28 @@ public class MatchInfo
 	 */
 	public String toString()
 	{
-		String str = String.format("Match round %d", round);
-		str += String.format("\nMatch smallBlind %d", sizeSB);
-		str += String.format("\nMatch bigBlind %d", sizeBB);
-		str += String.format("\nMatch button %d", buttonSeat);
+		String str = "";
+		if(infoType.equals(MatchInfoType.HandStart))
+		{
+			str += String.format("Match round %d\n", round);
+			str += String.format("Match smallBlind %d\n", sizeSB);
+			str += String.format("Match bigBlind %d\n", sizeBB);
+			str += String.format("Match button %d\n", buttonSeat);
+		}
 		for(int i = 0; i < bots.size(); i++)
 		{
 			if(i != mySeat)
-				str += String.format("\n%s stack %d", bots.get(i).getName(), botStacks[i]);
+				str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
 			else
-				str += String.format("\nYou stack %d", botStacks[i]);
+				str += String.format("You stack %d\n", botStacks[i]);
 		}
-		str += String.format("\nYou seat %d", mySeat);
-		str += String.format("\nYou hand %s", myHand);
-		str += String.format("\nMatch pot %d", pot);
-		str += String.format("\nMatch table %s", table);
+		if(infoType.equals(MatchInfoType.HandStart))
+		{
+			str += String.format("You seat %d\n", mySeat);
+			str += String.format("You hand %s\n", myHand);
+		}
+		str += String.format("Match pot %d\n", pot);
+		str += String.format("Match table %s", table);
 		return str;
 	}
 }
