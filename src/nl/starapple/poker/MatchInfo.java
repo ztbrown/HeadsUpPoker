@@ -11,9 +11,10 @@ public class MatchInfo
 	private String myHand;
 	private int buttonSeat;
 	private String table;
+	private int pot;
 	
 	public MatchInfo(int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize,
-					 int button, String tableCards)
+					 int button, String tableCards, int potSize)
 	{
 		round = roundNumber;
 		bots = botList;
@@ -23,6 +24,7 @@ public class MatchInfo
 		mySeat = -1;
 		buttonSeat = button;
 		table = tableCards;
+		pot = potSize;
 	}
 	
 	
@@ -62,6 +64,7 @@ public class MatchInfo
 		}
 		str += String.format("\nYou seat %d", mySeat);
 		str += String.format("\nYou hand %s", myHand);
+		str += String.format("\nMatch pot %d", pot);
 		str += String.format("\nMatch table %s", table);
 		return str;
 	}

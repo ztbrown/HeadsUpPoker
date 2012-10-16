@@ -2,7 +2,6 @@ package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
-
 import com.stevebrecher.HandEval;
 
 /**
@@ -87,7 +86,7 @@ public class MatchPlayer {
 	/**
 	 * Starts the match. Plays hands until one of the bots has no chips left.
 	 */
-	public int []runMatch()
+	public void runMatch()
 	{
 		handHistory += "Settings gameType NLH";
 		handHistory += "\nSettings timeBank " + TIMEBANK_MAX;
@@ -95,22 +94,11 @@ public class MatchPlayer {
 		handHistory += "\nSettings players " + numberOfBots;
 		for(int i = 0; i < numberOfBots; i++)
 			handHistory += String.format("\nSettings seat%d %s", i, bots.get(i).getName());
-        int maxHands = 50;
-        int handsPlayed = 0;
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
 			playHand();
 			writeHistory();
-            if( ++handsPlayed >= maxHands ) { break; }
 		}
-        /*
-        if( botStacks[0] == 0 ) { return new int[] { 2, 1 }; }
-        if( botStacks[1] == 0 ) { return new int[] { 1, 2 }; }
-        return new int[] { 1, 1 };
-        */
-        if( botStacks[0] > botStacks[1] ) { return new int[] { 1, 2 }; }
-        if( botStacks[0] < botStacks[1] ) { return new int[] { 2, 1 }; }
-        return new int[] { 1, 1 };
 	}
 	
 	
@@ -270,15 +258,19 @@ public class MatchPlayer {
 			botTimeBanks[activeSeat] = Math.max(botTimeBanks[activeSeat] - timeElapsed, 0);
 			botTimeBanks[activeSeat] = Math.min(botTimeBanks[activeSeat] + TIME_PER_MOVE, TIMEBANK_MAX);
 			
+			String botActionString;
 			if(nextMove == null)
 			{
-				nextMove = new PokerMove("check", 0);
+				botActionString = "check 0";
 				System.err.println(bots.get(activeSeat).getName() + " did not act in time, action set to \"check\"");
 			}
+			else
+				botActionString = nextMove.toString();
 		
 			int amountToCall = sizeCurrentRaise - botBetsThisRound[activeSeat];
-			String botAction = nextMove.getAction();
-			int botActionAmount = nextMove.getAmount();
+			String[] botActionSubStrings = botActionString.split(" ");
+			String botAction = botActionSubStrings[1];
+			int botActionAmount = Integer.parseInt(botActionSubStrings[2]);
 			
 			// Handle invalid / unlogical actions
 			if(botStacks[1 - activeSeat] == 0 && botAction.equals("raise"))
@@ -353,7 +345,8 @@ public class MatchPlayer {
 			PokerMove move = new PokerMove(botAction, botActionAmount);
 			move.setPlayer(bots.get(activeSeat).getName());
 			for(int i = 0; i < numberOfBots; i++)
-				bots.get(i).getBot().writeMove(move);
+				if(isInvolvedInMatch[i] && i != activeSeat)
+					bots.get(i).getBot().writeMove(move);
 		}
 	}
 	
@@ -536,7 +529,8 @@ public class MatchPlayer {
 	 */
 	private void sendMatchInfo()
 	{
-		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat, tableCards.toString().replaceAll("\\s", ""));
+		MatchInfo info = new MatchInfo(handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
+									   tableCards.toString(), pot.getCurrentPotSize());
 		for(int i = 0; i < numberOfBots; i++)
 		{
 			info.setCurrentBotInfo(bots.get(i), botHands[i].toString());
