@@ -100,7 +100,7 @@ public class MatchPlayer {
 		
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
-			if(handNumber == (blindLevel + 1) * HANDS_PER_BLINDLEVEL &&
+			if(isTournament && handNumber == (blindLevel + 1) * HANDS_PER_BLINDLEVEL &&
 			   sizeBB < BLINDLEVELHEIGHTS[BLINDLEVELHEIGHTS.length - 1])
 			{
 				blindLevel++;
@@ -112,9 +112,9 @@ public class MatchPlayer {
 		}
 	
         if( botStacks[0] > botStacks[1] )
-        	return new int[] { 0, 2 };
-        if( botStacks[0] < botStacks[1] )
         	return new int[] { 2, 0 };
+        if( botStacks[0] < botStacks[1] )
+        	return new int[] { 0, 2 };
         return new int[] { 1, 1 };
 	}
 	
@@ -355,10 +355,7 @@ public class MatchPlayer {
 			// send a message to all other bots about the action
 			handHistory += String.format("\n%s %s %d", bots.get(activeSeat).getName(), botAction, botActionAmount);
 			//System.out.println("|_| Total pot size: " + pot.getCurrentPotSize());
-			PokerMove move = new PokerMove(botAction, botActionAmount);
-			move.setPlayer(bots.get(activeSeat).getName());
-			for(int i = 0; i < numberOfBots; i++)
-				bots.get(i).getBot().writeMove(move);
+			sendMoveInfo(botAction, botActionAmount);
 		}
 	}
 	
@@ -438,12 +435,14 @@ public class MatchPlayer {
 		botBetsThisRound[activeSeat] = placeBet(sizeSB);		
 		//System.out.println("Bot " + activeSeat + " pays SB of " + botBetsThisRound[activeSeat]);
 		handHistory += String.format("\n%s sb %s", bots.get(activeSeat).getName(), botBetsThisRound[activeSeat]);
+		sendMoveInfo("post", botBetsThisRound[activeSeat]);
 		
 		// the bot behind the small blind pays the big blind
 		nextBotActive();
 		botBetsThisRound[activeSeat] = placeBet(sizeBB);
 		//System.out.println("Bot " + activeSeat + " pays BB of " + botBetsThisRound[activeSeat]);
 		handHistory += String.format("\n%s bb %s", bots.get(activeSeat).getName(), botBetsThisRound[activeSeat]);
+		sendMoveInfo("post", botBetsThisRound[activeSeat]);
 	}
 	
 	
@@ -548,6 +547,20 @@ public class MatchPlayer {
 			info.setCurrentBotInfo(bots.get(i), botHands[i].toString());
 			bots.get(i).getBot().writeInfo(info);
 		}
+	}
+	
+	
+	/**
+	 * Sends a message to all bots about the move that a bot made.
+	 * @param action : the action that the bot made
+	 * @param amount : the amount belonging to the action
+	 */
+	private void sendMoveInfo(String action, int amount)
+	{
+		PokerMove move = new PokerMove(action, amount);
+		move.setPlayer(bots.get(activeSeat).getName());
+		for(int i = 0; i < numberOfBots; i++)
+			bots.get(i).getBot().writeMove(move);
 	}
 	
 	
