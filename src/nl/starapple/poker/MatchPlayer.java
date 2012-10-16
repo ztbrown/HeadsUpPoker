@@ -11,6 +11,7 @@ import com.stevebrecher.HandEval;
 public class MatchPlayer {
 
 	private int handNumber;
+	private int blindLevel;
 	private ArrayList<PokerBot> bots;
 	private int numberOfBots;
 	private Deck deck;
@@ -24,7 +25,6 @@ public class MatchPlayer {
 	private int buttonSeat;
 	private int activeSeat;
 	private int lastToActSeat;
-	private int sizeStartStack;
 	private int sizeSB, sizeBB;
 	private int sizeMinimalRaise;
 	private int sizeCurrentRaise;
@@ -34,6 +34,9 @@ public class MatchPlayer {
 	private int[] botBetsThisRound;
 	private int[] botGainLoss;
 	
+	private final int SIZE_STARTSTACK = 1500;
+	private final int[] BLINDLEVELHEIGHTS = {20, 40, 60, 100, 150, 200, 300, 400, 600, 800, 1000, 1500, 2000, 3000};
+	private final int HANDS_PER_BLINDLEVEL = 10;
 	private final long TIME_PER_MOVE = 1000l;
 	private final long TIMEBANK_MAX = 10000l;
 	
@@ -46,22 +49,22 @@ public class MatchPlayer {
 	* @param SB : the size of the small blind
 	* @param tournamentMode : whether it is a tournament or not
 	*/
-	public MatchPlayer(Collection<PokerBot> botList, int stack, int BB, int SB, boolean tournamentMode)
+	public MatchPlayer(Collection<PokerBot> botList, boolean tournamentMode)
 	{
 		handNumber = 0;
+		blindLevel = 0;
 		bots = new ArrayList<PokerBot>(botList);
 		numberOfBots = botList.size();
-		sizeStartStack = stack;
 		botStacks = new int[numberOfBots];
 		botTimeBanks = new long[numberOfBots];
 		for(int i = 0; i < numberOfBots; i++)
 		{
-			botStacks[i] = sizeStartStack;
+			botStacks[i] = SIZE_STARTSTACK;
 			botTimeBanks[i] = TIMEBANK_MAX;
 		}
 		
-		sizeBB = BB;
-		sizeSB = SB;
+		sizeBB = BLINDLEVELHEIGHTS[0];
+		sizeSB = sizeBB / 2;
 		pot = new Pot(bots);
 		deck = new Deck();
 		tableCards = new Vector<Card>();
@@ -88,28 +91,26 @@ public class MatchPlayer {
 	 */
 	public int[] runMatch()
 	{
-		int maxHands = 50;
-		int handsPlayed = 0;
-
 		handHistory += "Settings gameType NLH";
 		handHistory += "\nSettings timeBank " + TIMEBANK_MAX;
 		handHistory += "\nSettings timeTurn " + TIME_PER_MOVE;
 		handHistory += "\nSettings players " + numberOfBots;
 		for(int i = 0; i < numberOfBots; i++)
 			handHistory += String.format("\nSettings seat%d %s", i, bots.get(i).getName());
+		
 		while(botStacks[0] > 0 && botStacks[1] > 0)
 		{
+			if(handNumber == (blindLevel + 1) * HANDS_PER_BLINDLEVEL &&
+			   sizeBB < BLINDLEVELHEIGHTS[BLINDLEVELHEIGHTS.length - 1])
+			{
+				blindLevel++;
+				sizeBB = BLINDLEVELHEIGHTS[blindLevel];
+				sizeSB = sizeBB / 2;
+			}
 			playHand();
 			writeHistory();
-			if(++handsPlayed >= maxHands )
-				break;
 		}
 	
-        /*
-        if( botStacks[0] == 0 ) { return new int[] { 2, 1 }; }
-        if( botStacks[1] == 0 ) { return new int[] { 1, 2 }; }
-        return new int[] { 1, 1 };
-        */
         if( botStacks[0] > botStacks[1] )
         	return new int[] { 0, 2 };
         if( botStacks[0] < botStacks[1] )
@@ -177,8 +178,8 @@ public class MatchPlayer {
 		{
 			for(int i = 0; i < numberOfBots; i++)
 			{
-				botGainLoss[i] += botStacks[i] - sizeStartStack;
-				botStacks[i] = sizeStartStack;
+				botGainLoss[i] += botStacks[i] - SIZE_STARTSTACK;
+				botStacks[i] = SIZE_STARTSTACK;
 				isInvolvedInMatch[i] = true;
 			}
 		}
