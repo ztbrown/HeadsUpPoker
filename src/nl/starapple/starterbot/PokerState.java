@@ -79,6 +79,7 @@ public class PokerState {
 				opponentAction = "call";
 			} else if( move.equals("post") ) {
 				currentBet = Integer.valueOf(amount) - lastPost;
+				opponentAction = "post";
 			} else {
 				// assume he made some agressive move
 				try {
