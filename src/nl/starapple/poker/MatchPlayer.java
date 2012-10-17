@@ -172,6 +172,7 @@ public class MatchPlayer
 		handNumber++;
 		tableCards = new Vector<Card>();
 		deck.resetDeck();
+		pot = new Pot(bots);
 		round = BetRound.PREFLOP;
 		
 		buttonSeat += 1;
@@ -419,7 +420,12 @@ public class MatchPlayer
 		sendHandInfo(HandInfoType.NewBetRound);
 		//System.out.println(table + "]");
 		if(!handHistory.endsWith("]"))
-			handHistory += "\nMatch pot " + pot.getCurrentPotSize();
+		{
+			ArrayList<Integer> allPots = pot.getPots(botsInvolvedToArrayList());			
+			handHistory += String.format("\nMatch pot %d", allPots.get(0));
+			for(int i = 1; i < allPots.size(); i++)
+				handHistory += String.format("\nMatch sidepot%d %d", i, allPots.get(i));
+		}
 		handHistory += "\nMatch table " + table;
 		
 		return true;
@@ -540,6 +546,19 @@ public class MatchPlayer
 	
 	
 	/**
+	 * Returns an ArrayList of all bots that are marked as involved.
+	 */
+	private ArrayList<PokerBot> botsInvolvedToArrayList()
+	{
+		ArrayList<PokerBot> botsInvolved = new ArrayList<PokerBot>();
+		for(int i = 0; i < isInvolvedInHand.length; i++)
+			if(isInvolvedInHand[i])
+				botsInvolved.add(bots.get(i));		
+		return botsInvolved;
+	}
+	
+	
+	/**
 	 * Sends the match info to all the bots that are playing at this table. This method should be called at the start
 	 * of a new match.
 	 */
@@ -561,8 +580,9 @@ public class MatchPlayer
 	 */
 	private void sendHandInfo(HandInfoType type)
 	{
+		ArrayList<Integer> allPots = pot.getPots(botsInvolvedToArrayList());
 		HandInfo info = new HandInfo(type, handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
-									   tableCards.toString().replaceAll("\\s", ""), pot.getCurrentPotSize());
+									   tableCards.toString().replaceAll("\\s", ""), allPots);
 		for(int i = 0; i < numberOfBots; i++)
 		{
 			info.setCurrentBotInfo(bots.get(i), botHands[i]);

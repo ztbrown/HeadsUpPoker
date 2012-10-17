@@ -12,10 +12,10 @@ public class HandInfo
 	private Hand myHand;
 	private int buttonSeat;
 	private String table;
-	private int pot;
+	private ArrayList<Integer> pots;
 	
 	public HandInfo(HandInfoType type, int roundNumber, ArrayList<PokerBot> botList, int[] stacks, int bigBlindSize, int smallBlindSize,
-					 int button, String tableCards, int potSize)
+					 int button, String tableCards, ArrayList<Integer> allPots)
 	{
 		infoType = type;
 		round = roundNumber;
@@ -25,7 +25,7 @@ public class HandInfo
 		sizeSB = smallBlindSize;
 		buttonSeat = button;
 		table = tableCards;
-		pot = potSize;
+		pots = allPots;
 	}
 	
 	
@@ -61,7 +61,10 @@ public class HandInfo
 			str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
 			str += String.format("%s hand %s\n", myBot.getName(), myHand.toString());
 		}
-		str += String.format("Match pot %d\n", pot);
+		str += String.format("Match pot %d\n", pots.get(0));
+		for(int i = 1; i < pots.size(); i++)
+			str += String.format("Match sidepot%d %d\n", i, pots.get(i));
+		
 		str += String.format("Match table %s", table);
 		return str;
 	}

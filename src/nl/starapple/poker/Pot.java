@@ -1,4 +1,5 @@
 package nl.starapple.poker;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,8 +13,7 @@ import java.util.Map.Entry;
 public class Pot
 {
 	private Map<PokerBot, Integer> botBetSizes;
-	private int totalPot;
-	
+	private int totalPot;	
 	
 	/**
 	 * Creates a Pot object, used for keeping track of the pot for a specific hand.
@@ -53,7 +53,7 @@ public class Pot
 		if(maxSize > 0 && maxSize < winnersBet)
 			winnersBet = maxSize;
 		int winnersPot = 0;
-		for (Entry<PokerBot, Integer> entry : botBetSizes.entrySet())
+		for(Entry<PokerBot, Integer> entry : botBetSizes.entrySet())
 		{
 		    PokerBot key = entry.getKey();
 		    Integer value = entry.getValue();
@@ -113,8 +113,40 @@ public class Pot
 	/**
 	 * Returns the total size of the pot
 	 */
-	public int getCurrentPotSize()
+	public int getTotalPotSize()
 	{
 		return totalPot;
+	}
+	
+	
+	/**
+	 * Returns the size of the main pot and possible side pots, given the bots that are still involved in the hand.
+	 * @param involvedBots : the bots that are still in the hand
+	 */
+	public ArrayList<Integer> getPots(ArrayList<PokerBot> involvedBots)
+	{
+		ArrayList<Integer> pots = new ArrayList<Integer>();
+		Map<PokerBot, Integer> tempBotBetSizes = new HashMap<PokerBot, Integer>(botBetSizes);
+		while(involvedBots.size() > 0)
+		{
+			int lowestBet = Integer.MAX_VALUE;
+			int currentPotSize = 0;
+			for(int i = 0; i < involvedBots.size(); i++)
+				lowestBet = Math.min(tempBotBetSizes.get(involvedBots.get(i)), lowestBet);
+			
+			for(Entry<PokerBot, Integer> entry : tempBotBetSizes.entrySet())
+			{
+			    PokerBot key = entry.getKey();
+			    int value = entry.getValue();
+			    int adjustment = Math.min(value, lowestBet);
+			    currentPotSize += adjustment;
+				tempBotBetSizes.put(key, value - adjustment);
+				if(value == adjustment)
+					involvedBots.remove(key);				
+			}
+			
+			pots.add(currentPotSize);
+		}		
+		return pots;
 	}
 }

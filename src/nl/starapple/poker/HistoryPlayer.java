@@ -137,7 +137,8 @@ public class HistoryPlayer
 	
 	
 	/**
-	 * Reads and passes the given event line of the current hand.
+	 * Reads the given event line of the current hand and gives the retrieved information to the MatchViewer. Sometimes
+	 * multiple lines are read at once when they contain information that is to be send in one piece.
 	 * @param lineIndex : the line number of the current hand
 	 */
 	private boolean playEvent(int lineIndex)
@@ -152,7 +153,22 @@ public class HistoryPlayer
 			if(lineParts[1].equals("hand"))
 				viewer.updateRound(Integer.valueOf(lineParts[2]));
 			else if(lineParts[1].equals("pot"))
-				viewer.collectPot(Integer.valueOf(lineParts[2]));
+			{
+				ArrayList<Integer> allPots = new ArrayList<Integer>();
+				allPots.add(Integer.valueOf(lineParts[2]));
+				while(true)
+				{
+					lineParts = currentHand.get(++lineIndex).split(" ");
+					if(lineParts[1].startsWith("sidepot"))
+						allPots.add(Integer.valueOf(lineParts[2]));
+					else
+					{
+						lineParts = currentHand.get(--lineIndex).split(" ");
+						break;
+					}
+				}
+				viewer.collectPots(allPots);
+			}
 			else if(lineParts[1].equals("table"))
 				viewer.updateTable(lineParts[2]);
 		}
