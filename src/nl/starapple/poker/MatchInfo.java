@@ -49,9 +49,10 @@ public class MatchInfo
 		str += String.format("\nSettings timeBank %d", timeBank);
 		str += String.format("\nSettings timePerMove %d", timePerMove);
 		str += String.format("\nSettings handsPerLevel %d", handsPerLevel);
+		str += String.format("\nSettings yourBot %s", myBot.getName());
 		for(int i = 0; i < bots.size(); i++)
 			str += String.format("\n%s seat %d", bots.get(i).getName(), i);
-		str += String.format("\nSettings yourBot %s", myBot.getName());
+		
 		return str;
 	}
 }
