@@ -16,13 +16,19 @@ public class IORobot implements Robot {
 		handler = new IOHandler(command);
 	}
 
+	@Override
+	public void setup(long timeOut)
+	{
+		handler.readLine(timeOut);
+	}
+	
     @Override
 	public void writeMove(PokerMove move) {
         handler.writeLine(move.toString());
     }
 	
     @Override
-	public PokerMove getMove(long timeOut) {
+	public PokerMove getMove(int myStack, int totalPot, long timeOut) {
 		handler.writeLine("go "+timeOut);
         String line = handler.readLine(timeOut);
         if( line == null ) { return null; }

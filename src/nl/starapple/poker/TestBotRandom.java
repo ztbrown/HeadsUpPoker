@@ -5,20 +5,25 @@ import java.util.Random;
 
 public class TestBotRandom implements Robot
 {
-	
 	public TestBotRandom()
 	{
 		
+	}
+	
+	@Override
+	public void setup(long timeOut)
+	{
+		//System.out.println("Setup queried");
 	}
 
 	@Override
 	public void writeInfo(HandInfo info)
 	{
-
+		//System.out.println(info);
 	}
 
 	@Override
-	public PokerMove getMove(long timeOut)
+	public PokerMove getMove(int myStack, int totalPot, long timeOut)
 	{
 		Random r = new Random();
 		int next = r.nextInt(5);
@@ -34,18 +39,18 @@ public class TestBotRandom implements Robot
 	@Override
 	public void writeMove(PokerMove move)
 	{
-
+		//System.out.println(move.toString());
 	}
 	
 	@Override
 	public void writeResult(HandResultInfo info)
 	{
-
+		//System.out.println(info);
 	}
 
 	@Override
 	public void writeInfo(MatchInfo info)
 	{
-
+		//System.out.println(info);
 	}
 }

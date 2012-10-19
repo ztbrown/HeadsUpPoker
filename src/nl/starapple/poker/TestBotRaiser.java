@@ -8,6 +8,12 @@ public class TestBotRaiser implements Robot
 	{
 		
 	}
+	
+	@Override
+	public void setup(long timeOut)
+	{
+		
+	}
 
 	@Override
 	public void writeInfo(HandInfo info)
@@ -16,7 +22,7 @@ public class TestBotRaiser implements Robot
 	}
 
 	@Override
-	public PokerMove getMove(long timeOut)
+	public PokerMove getMove(int myStack, int totalPot, long timeOut)
 	{
 		return new PokerMove("raise", 100);
 	}

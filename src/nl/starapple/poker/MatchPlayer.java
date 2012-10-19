@@ -38,8 +38,9 @@ public class MatchPlayer
 	private final int SIZE_STARTSTACK = 1500;
 	private final int[] BLINDLEVELHEIGHTS = {20, 40, 60, 100, 150, 200, 300, 400, 600, 800, 1000, 1500, 2000, 3000};
 	private final int HANDS_PER_BLINDLEVEL = 10;
-	private final long TIME_PER_MOVE = 1000l;
-	private final long TIMEBANK_MAX = 10000l;
+	private final long SETUP_TIME = 10000l;
+	private final long TIME_PER_MOVE = 500l;
+	private final long TIMEBANK_MAX = 5000l;
 	
 	
 	/**
@@ -195,6 +196,7 @@ public class MatchPlayer
 		
 		//System.out.println("Stack bot 0: " + botStacks[0]);
 		//System.out.println("Stack bot 1: " + botStacks[1]);
+		sendHandInfo(HandInfoType.HAND_START);
 		handHistory += String.format("\nMatch hand %d", handNumber);
 		handHistory += String.format("\n%s stack %d", bots.get(0).getName(), botStacks[0]);
 		handHistory += String.format("\n%s stack %d", bots.get(1).getName(), botStacks[1]);
@@ -273,7 +275,8 @@ public class MatchPlayer
 		if(botStacks[activeSeat] > 0 && isInvolvedInHand[activeSeat])
 		{
 			long startTime = System.currentTimeMillis();
-			PokerMove nextMove = (new BotAction()).getMove(bots.get(activeSeat).getBot(), botTimeBanks[activeSeat]);
+			PokerMove nextMove = (new BotAction()).getMove(bots.get(activeSeat).getBot(), botStacks[activeSeat],
+														   pot.getTotalPotSize(), botTimeBanks[activeSeat]);
 			long timeElapsed = System.currentTimeMillis() - startTime;
 			
 			// update the timebank of the current bot with the elapsed time and increment it for the next move
@@ -389,7 +392,7 @@ public class MatchPlayer
 			handHistory += String.format("\n%s hand %s", bots.get(i).getName(), botHands[i].toString());
 			//System.out.println("Bot " + i + " hand: " + botHands[i].toString());
 		}
-		sendHandInfo(HandInfoType.HandStart);
+		sendHandInfo(HandInfoType.HAND_CARDS);
 	}
 	
 	
@@ -417,7 +420,7 @@ public class MatchPlayer
 			table += "," + tableCards.get(i).toString();
 		table += "]";
 			
-		sendHandInfo(HandInfoType.NewBetRound);
+		sendHandInfo(HandInfoType.NEW_BETROUND);
 		//System.out.println(table + "]");
 		if(!handHistory.endsWith("]"))
 		{
@@ -559,17 +562,40 @@ public class MatchPlayer
 	
 	
 	/**
-	 * Sends the match info to all the bots that are playing at this table. This method should be called at the start
-	 * of a new match.
+	 * Sends the match info to all the bots that are playing at this table. Gives the bots some time to prepare for 
+	 * playing a match, the method waits for all bots to return from setup for a maximum time of 'SETUP_TIME'. This
+	 * method should be called at the start of a new match.
 	 */
 	private void sendMatchInfo()
 	{
+		boolean botsReady[] = new boolean[numberOfBots];
 		MatchInfo info = new MatchInfo(bots, gameType, isTournament, TIMEBANK_MAX, TIME_PER_MOVE,
 									   HANDS_PER_BLINDLEVEL);		
 		for(int i = 0; i < numberOfBots; i++)
 		{
 			info.setCurrentBotInfo(bots.get(i));
 			bots.get(i).getBot().writeInfo(info);
+			botsReady[i] = false;
+		}		
+		
+		Thread[] setupThreads = new Thread[numberOfBots];
+		for(int i = 0; i < numberOfBots; i++)
+		{
+			final Robot bot = bots.get(i).getBot();
+			setupThreads[i] = new Thread()
+			{
+		        public void run()
+		        {
+		        	bot.setup(SETUP_TIME);
+		        }
+			};
+		}
+		
+		for(int i = 0; i < numberOfBots; i++)
+		{
+			setupThreads[i].start();
+			try{ setupThreads[i].join(); }
+				catch(InterruptedException e){ e.printStackTrace(); }
 		}
 	}
 	
