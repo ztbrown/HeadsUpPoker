@@ -65,12 +65,13 @@ public class HandInfo
 			
 			if(infoType.equals(HandInfoType.NEW_BETROUND))
 			{
-				str += String.format("Match table %s", table);
+				str += String.format("Match table %s\n", table);
 				str += String.format("Match pot %d\n", pots.get(0));
 				str += String.format("Match sidepots [");
 				for(int i = 1; i + 1 < pots.size(); i++)
 					str += pots.get(i) + ",";
-				str += pots.get(pots.get(pots.size() - 1)) + "]\n";
+				if(pots.size() - 1 > 0)
+					str += pots.get(pots.size() - 1) + "]\n";
 			}
 		}
 		return str;
