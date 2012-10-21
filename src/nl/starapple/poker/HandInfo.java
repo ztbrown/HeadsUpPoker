@@ -48,33 +48,36 @@ public class HandInfo
 	public String toString()
 	{
 		String str = "";
-		if(infoType.equals(HandInfoType.HAND_CARDS))
+		
+		if(infoType.equals(HandInfoType.HAND_CARDS)) {
 			str += String.format("%s hand %s\n", myBot.getName(), myHand.toString());
-		else
+		}
+		
+		if(infoType.equals(HandInfoType.HAND_START))
 		{
-			if(infoType.equals(HandInfoType.HAND_START))
-			{
-				str += String.format("Match round %d\n", round);
-				str += String.format("Match smallBlind %d\n", sizeSB);
-				str += String.format("Match bigBlind %d\n", sizeBB);
-				str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
-			}
-			
-			if( infoType.equals(HandInfoType.NEW_BETROUND) ) {
-				str += String.format("Match table %s\n", table);
-			}
-			
-			if( infoType.equals(HandInfoType.PREMOVE_INFO) )
-			{
-				for(int i = 0; i < bots.size(); i++)
-					str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
-				
-				str += String.format("Match pot %d\n", pots.get(0));
-				str += String.format("Match sidepots [");
-				for(int i = 1; i < pots.size(); i++)
-					str += ((i>1)?",":"") + pots.get(i);
-				str += "]\n";
-			}
+			str += String.format("Match round %d\n", round);
+			str += String.format("Match smallBlind %d\n", sizeSB);
+			str += String.format("Match bigBlind %d\n", sizeBB);
+			str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
+		}
+		
+		if( infoType.equals(HandInfoType.PREMOVE_INFO) 
+			 || infoType.equals(HandInfoType.HAND_START) ) {
+			for(int i = 0; i < bots.size(); i++)
+				str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
+		}
+		
+		if( infoType.equals(HandInfoType.NEW_BETROUND) ) {
+			str += String.format("Match table %s\n", table);
+		}
+		
+		if( infoType.equals(HandInfoType.PREMOVE_INFO) )
+		{
+			str += String.format("Match pot %d\n", pots.get(0));
+			str += String.format("Match sidepots [");
+			for(int i = 1; i < pots.size(); i++)
+				str += ((i>1)?",":"") + pots.get(i);
+			str += "]\n";
 		}
 		return str;
 	}
