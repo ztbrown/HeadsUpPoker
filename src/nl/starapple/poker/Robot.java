@@ -6,7 +6,7 @@ public interface Robot {
 	
 	public void writeMove(PokerMove move);
 	
-	public PokerMove getMove(int yourStack, int totalPot, long timeOut);
+	public PokerMove getMove(long timeOut);
 
 	public void writeInfo(HandInfo info);
 

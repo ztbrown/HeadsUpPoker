@@ -28,7 +28,7 @@ public class IORobot implements Robot {
     }
 	
     @Override
-	public PokerMove getMove(int myStack, int totalPot, long timeOut) {
+	public PokerMove getMove(long timeOut) {
 		handler.writeLine("go "+timeOut);
         String line = handler.readLine(timeOut);
         if( line == null ) { return null; }

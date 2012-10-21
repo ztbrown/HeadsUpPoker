@@ -2,6 +2,7 @@ package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Vector;
+
 import com.stevebrecher.HandEval;
 
 /**
@@ -274,9 +275,9 @@ public class MatchPlayer
 	{
 		if(botStacks[activeSeat] > 0 && isInvolvedInHand[activeSeat])
 		{
+			sendHandInfo(HandInfoType.PREMOVE_INFO);
 			long startTime = System.currentTimeMillis();
-			PokerMove nextMove = (new BotAction()).getMove(bots.get(activeSeat).getBot(), botStacks[activeSeat],
-														   pot.getTotalPotSize(), botTimeBanks[activeSeat]);
+			PokerMove nextMove = (new BotAction()).getMove(bots.get(activeSeat).getBot(), botTimeBanks[activeSeat]);
 			long timeElapsed = System.currentTimeMillis() - startTime;
 			
 			// update the timebank of the current bot with the elapsed time and increment it for the next move
@@ -609,6 +610,11 @@ public class MatchPlayer
 		ArrayList<Integer> allPots = pot.getPots(botsInvolvedToArrayList());
 		HandInfo info = new HandInfo(type, handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
 									   tableCards.toString().replaceAll("\\s", ""), allPots);
+		if( type.equals(HandInfoType.PREMOVE_INFO) ) {
+			/* The pre-move info only goes to the active bot. */
+			bots.get(activeSeat).getBot().writeInfo(info);
+			return;
+		}
 		for(int i = 0; i < numberOfBots; i++)
 		{
 			info.setCurrentBotInfo(bots.get(i), botHands[i]);

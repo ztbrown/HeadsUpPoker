@@ -22,7 +22,7 @@ public class TestBotRaiser implements Robot
 	}
 
 	@Override
-	public PokerMove getMove(int myStack, int totalPot, long timeOut)
+	public PokerMove getMove(long timeOut)
 	{
 		return new PokerMove("raise", 100);
 	}

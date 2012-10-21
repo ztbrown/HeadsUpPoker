@@ -23,7 +23,7 @@ public class TestBotRandom implements Robot
 	}
 
 	@Override
-	public PokerMove getMove(int myStack, int totalPot, long timeOut)
+	public PokerMove getMove(long timeOut)
 	{
 		Random r = new Random();
 		int next = r.nextInt(5);

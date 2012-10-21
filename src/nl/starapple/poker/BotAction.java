@@ -13,13 +13,13 @@ public class BotAction
 	 * @param bot : the bot that has to take the next action
 	 * @param timeOut : amount of time in milliseconds that the bot has to react
 	 */
-	public PokerMove getMove(final Robot bot, final int stack, final int totalPot, final long timeOut)
+	public PokerMove getMove(final Robot bot, final long timeOut)
 	{		
 		Thread actionThread = new Thread()
 		{
 	        public void run()
 	        {
-	        	move = bot.getMove(stack, totalPot, timeOut);
+	        	move = bot.getMove(timeOut);
 	        }
 		};
 		

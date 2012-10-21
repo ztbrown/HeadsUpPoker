@@ -22,7 +22,7 @@ public class TestBotCheckFolder implements Robot
 	}
 
 	@Override
-	public PokerMove getMove(int myStack, int totalPot, long timeOut)
+	public PokerMove getMove(long timeOut)
 	{
 		return new PokerMove("check", 0);
 	}
