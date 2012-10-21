@@ -60,16 +60,15 @@ public class HandInfo
 				str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
 			}
 			
-			for(int i = 0; i < bots.size(); i++)
-				str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
-			
 			if( infoType.equals(HandInfoType.NEW_BETROUND) ) {
 				str += String.format("Match table %s\n", table);
 			}
 			
-			if( infoType.equals(HandInfoType.NEW_BETROUND)
-					|| infoType.equals(HandInfoType.PREMOVE_INFO) )
+			if( infoType.equals(HandInfoType.PREMOVE_INFO) )
 			{
+				for(int i = 0; i < bots.size(); i++)
+					str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
+				
 				str += String.format("Match pot %d\n", pots.get(0));
 				str += String.format("Match sidepots [");
 				for(int i = 1; i < pots.size(); i++)
