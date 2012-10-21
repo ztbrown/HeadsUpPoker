@@ -53,7 +53,7 @@ public class IOHandler {
 	public boolean writeLine(String line) {
 		//System.err.printf("writeLine(\"%s\")\n", line);
 		try {
-			in.writeLine(line);
+			in.writeLine(line.trim());
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
