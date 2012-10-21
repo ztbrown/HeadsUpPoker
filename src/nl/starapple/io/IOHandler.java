@@ -41,6 +41,7 @@ public class IOHandler {
 	
 	public String readLine(long timeout) {
 		//System.err.printf("readLine(%d)\n", timeout);
+		if( !isRunning() ) { return null; }
 		try {
 			in.flush();
 		} catch (IOException e) {
@@ -52,6 +53,7 @@ public class IOHandler {
 	
 	public boolean writeLine(String line) {
 		//System.err.printf("writeLine(\"%s\")\n", line);
+		if( !isRunning() ) { return false; }
 		try {
 			in.writeLine(line.trim());
 			return true;
@@ -71,5 +73,14 @@ public class IOHandler {
 	
 	public String getStderr() {
 		return err.getData();
+	}
+	
+	public boolean isRunning() {
+		try {
+			child.exitValue();
+			return false;
+		} catch( IllegalThreadStateException ex ) {
+			return true;
+		}
 	}
 }
