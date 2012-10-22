@@ -40,6 +40,24 @@ public class Pot
 		totalPot += size;
 	}
 	
+	/**
+	 * Return value of function payoutWinners.
+	 */
+	public class PayoutWinnerInfo {
+		private ArrayList<Integer> pots;
+		private ArrayList<ArrayList<PokerBot>> winnerPerPot;
+		public PayoutWinnerInfo(ArrayList<Integer> pots, ArrayList<ArrayList<PokerBot>> winnerPerPot) {
+			super();
+			this.pots = pots;
+			this.winnerPerPot = winnerPerPot;
+		}
+		public ArrayList<Integer> getPots() {
+			return pots;
+		}
+		public ArrayList<ArrayList<PokerBot>> getWinnerPerPot() {
+			return winnerPerPot;
+		}
+	}
 	
 	/**
 	 * Calculates for all the bots which pots they win. It first calculates which main pot and side pots there are.
@@ -48,7 +66,7 @@ public class Pot
 	 * where each element is itself an ArrayList of winners of the corresponding pot.
 	 * @param botHandStrengths : A map of PokerBots paired with their corresponding hand strengths
 	 */
-	public ArrayList<Object> payoutWinners(HashMap<PokerBot, Integer> botHandStrengths)
+	public PayoutWinnerInfo payoutWinners(HashMap<PokerBot, Integer> botHandStrengths)
 	{	
 		// Calculate with the involved bots how much each bot put in the main pot and how much per side pot
 		ArrayList<Integer> involvedBotBets = new ArrayList<Integer>();
@@ -126,10 +144,7 @@ public class Pot
 			sumHandledPots = maxSumHandledPots;
 		}
 		
-		ArrayList<Object> result = new ArrayList<Object>();
-		result.add(pots);
-		result.add(winnerPerPot);
-		return result;
+		return new PayoutWinnerInfo(pots, winnerPerPot);
 	}
 	
 	
