@@ -40,13 +40,16 @@ public class Pot
 		totalPot += size;
 	}
 	
+	
 	/**
 	 * Return value of function payoutWinners.
 	 */
-	public class PayoutWinnerInfo {
+	public class PayoutWinnerInfo
+	{
 		private ArrayList<Integer> pots;
 		private ArrayList<ArrayList<PokerBot>> winnerPerPot;
-		public PayoutWinnerInfo(ArrayList<Integer> pots, ArrayList<ArrayList<PokerBot>> winnerPerPot) {
+		public PayoutWinnerInfo(ArrayList<Integer> pots, ArrayList<ArrayList<PokerBot>> winnerPerPot)
+		{
 			super();
 			this.pots = pots;
 			this.winnerPerPot = winnerPerPot;
@@ -104,11 +107,6 @@ public class Pot
 					bestHandValue = value;
 					currentBestBots.add(entry.getKey());
 				}					
-			}
-			
-			if(currentBestBots.size() > 1)
-			{
-				int baaah = 0;
 			}
 				
 			// Calculate for each bot with currently the best hand in which remaining pots he is involved

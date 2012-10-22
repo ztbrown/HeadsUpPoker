@@ -554,50 +554,6 @@ public class MatchPlayer
 			botStacks[i] += winPerBot[i];
 		}
 		sendResultInfo(winPerBot, botHandStrengths.size() > 1);
-		
-		/*
-		// case of a tie
-		if(botHandStrength[0] == botHandStrength[1])
-		{
-			botPots = pot.getTwoWinnersPot(bots.get(0), bots.get(1));
-			//System.out.println("> result: it's a tie");
-		}
-		// case of one winner
-		else
-		{
-			int winnerSeat = 0;
-			if(botHandStrength[1] > botHandStrength[0])
-				winnerSeat = 1;
-			
-			botPots[winnerSeat] = pot.getWinnersPot(bots.get(winnerSeat), 0);				
-			if(!pot.isEmpty())
-			{
-				//System.out.println("> result: bot " + (1 - winnerSeat) + " gets the side pot returned");
-				botPots[1 - winnerSeat] = pot.getWinnersPot(bots.get(1 - winnerSeat), 0);
-			}
-			//System.out.println("> result: bot " + winnerSeat + " wins the pot");
-		}
-			
-		sendResultInfo(botPots, true);
-		// No showdown, one of the bots folded, so the other bot gets the whole pot
-		else
-		{
-			int winnerSeat = 0;
-			if(!isInvolvedInHand[0])
-				winnerSeat = 1;
-
-			botPots[winnerSeat] = pot.getWinnersPot(bots.get(winnerSeat), 0);
-			sendResultInfo(botPots, false);
-			//System.out.println("> result: bot " + winnerSeat + " wins the pot");
-		}
-		
-		botStacks[0] += botPots[0];
-		botStacks[1] += botPots[1];
-		if(botPots[0] > 0)
-			handHistory += String.format("\n%s wins %d", bots.get(0).getName(), botPots[0]);
-		if(botPots[1] > 0)
-			handHistory += String.format("\n%s wins %d", bots.get(1).getName(), botPots[1]);
-		*/
 	}
 	
 	
@@ -662,8 +618,9 @@ public class MatchPlayer
 		ArrayList<Integer> allPots = pot.getPots(botsInvolvedToArrayList());
 		HandInfo info = new HandInfo(type, handNumber, bots, botStacks, sizeBB, sizeSB, buttonSeat,
 									   tableCards.toString().replaceAll("\\s", ""), allPots);
-		if( type.equals(HandInfoType.PREMOVE_INFO) ) {
-			/* The pre-move info only goes to the active bot. */
+		// The pre-move info only goes to the active bot.
+		if(type.equals(HandInfoType.PREMOVE_INFO) )
+		{		
 			bots.get(activeSeat).getBot().writeInfo(info);
 			return;
 		}
