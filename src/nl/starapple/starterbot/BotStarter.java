@@ -13,7 +13,7 @@ public class BotStarter implements Bot {
 	}
 	
 	public HandEval.HandCategory getHandCategory(Hand hand, Card[] table) {
-		if( table.length == 0 ) {
+		if( table == null || table.length == 0 ) {
 			return hand.getCard1().getHeight() == hand.getCard2().getHeight()
 					? HandEval.HandCategory.PAIR
 					: HandEval.HandCategory.NO_PAIR;

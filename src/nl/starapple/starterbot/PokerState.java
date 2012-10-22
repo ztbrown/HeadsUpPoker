@@ -99,6 +99,7 @@ public class PokerState {
 	private int[] parsePots(String value) {
 		if( value.endsWith("]") ) { value = value.substring(0, value.length()-1); }
 		if( value.startsWith("[") ) { value = value.substring(1); }
+		if( value.length() == 0 ) { return new int[0]; }
 		String[] parts = value.split(",");
 		int[] pots = new int[parts.length];
 		for( int i = 0; i < parts.length; ++i ) {
@@ -110,6 +111,7 @@ public class PokerState {
 	private Card[] parseCards(String value) {
 		if( value.endsWith("]") ) { value = value.substring(0, value.length()-1); }
 		if( value.startsWith("[") ) { value = value.substring(1); }
+		if( value.length() == 0 ) { return new Card[0]; }
 		String[] parts = value.split(",");
 		Card[] cards = new Card[parts.length];
 		for( int i = 0; i < parts.length; ++i ) {
