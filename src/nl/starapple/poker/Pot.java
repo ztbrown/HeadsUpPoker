@@ -1,6 +1,7 @@
 package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map.Entry;
 public class Pot
 {
 	private Map<PokerBot, Integer> botBetSizes;
-	private int totalPot;	
+	private int totalPot;
 	
 	/**
 	 * Creates a Pot object, used for keeping track of the pot for a specific hand.
@@ -41,12 +42,105 @@ public class Pot
 	
 	
 	/**
+	 * Calculates for all the bots which pots they win. It first calculates which main pot and side pots there are.
+	 * Then it computes which bot(s) win which pot. The returned ArrayList contains three objects. The first object is
+	 * an ArrayList of the pot sizes represented as integers. The second object is an ArrayList of winners per pot,
+	 * where each element is itself an ArrayList of winners of the corresponding pot.
+	 * @param botHandStrengths : A map of PokerBots paired with their corresponding hand strengths
+	 */
+	public ArrayList<Object> payoutWinners(HashMap<PokerBot, Integer> botHandStrengths)
+	{	
+		// Calculate with the involved bots how much each bot put in the main pot and how much per side pot
+		ArrayList<Integer> involvedBotBets = new ArrayList<Integer>();
+		for(Entry<PokerBot, Integer> entry : botHandStrengths.entrySet())
+			involvedBotBets.add(botBetSizes.get(entry.getKey()));
+		Collections.sort(involvedBotBets);
+		ArrayList<Integer> potsAmountPerBot = new ArrayList<Integer>();
+		int previousAmount = 0;
+		for(int i = 0; i < involvedBotBets.size(); i++)
+		{
+			potsAmountPerBot.add(involvedBotBets.get(i) - previousAmount);
+			previousAmount = involvedBotBets.get(i);
+		}
+		
+		// Get the sizes of the main pot and the side pots
+		ArrayList<PokerBot> bots = new ArrayList<PokerBot>(botHandStrengths.keySet());
+		ArrayList<Integer> pots = getPots(bots);
+		
+		// Calculate per pot part which players are winning it
+		ArrayList<ArrayList<PokerBot>> winnerPerPot = new ArrayList<ArrayList<PokerBot>>();
+		int potIndex = 0;
+		int sumHandledPots = 0;
+		while(botHandStrengths.size() > 0)
+		{		
+			// Get out of the remaining bots the bot(s) that has/have the best hand
+			int bestHandValue = 0;
+			ArrayList<PokerBot> currentBestBots = new ArrayList<PokerBot>();
+			for(Entry<PokerBot, Integer> entry : botHandStrengths.entrySet())
+			{
+				int value = entry.getValue();
+				if(value > bestHandValue)
+					currentBestBots.clear();
+				if(value >= bestHandValue)
+				{
+					bestHandValue = value;
+					currentBestBots.add(entry.getKey());
+				}					
+			}
+			
+			if(currentBestBots.size() > 1)
+			{
+				int baaah = 0;
+			}
+				
+			// Calculate for each bot with currently the best hand in which remaining pots he is involved
+			int maxPotIndex = 0;
+			int maxSumHandledPots = 0;
+			for(int i = 0; i < currentBestBots.size(); i++)
+			{
+				int currentPotIndex = potIndex;
+				int currentSumHandledPots = sumHandledPots;
+				PokerBot currentBot = currentBestBots.get(i);
+				botHandStrengths.remove(currentBot);
+				while(botBetSizes.get(currentBot) > currentSumHandledPots)
+				{
+					ArrayList<PokerBot> currentPotWinners = new ArrayList<PokerBot>();
+					if(currentPotIndex <= winnerPerPot.size() - 1)
+					{
+						currentPotWinners = winnerPerPot.get(currentPotIndex);
+						currentPotWinners.add(currentBot);
+						winnerPerPot.set(currentPotIndex, currentPotWinners);
+					}
+					else
+					{
+						currentPotWinners.add(currentBot);
+						winnerPerPot.add(currentPotWinners);
+					}
+					//currentSumHandledPots += pots.get(currentPotIndex++);
+					currentSumHandledPots += potsAmountPerBot.get(currentPotIndex++);
+				}
+				maxPotIndex = Math.max(maxPotIndex, currentPotIndex);
+				maxSumHandledPots = Math.max(maxSumHandledPots, currentSumHandledPots);
+			}
+			potIndex = maxPotIndex;
+			sumHandledPots = maxSumHandledPots;
+		}
+		
+		ArrayList<Object> result = new ArrayList<Object>();
+		result.add(pots);
+		result.add(winnerPerPot);
+		return result;
+	}
+	
+	
+	/**
 	 * Calculates the amount of the pot that the winner receives. If it is about winning a side pot, the amount that
 	 * the player betted more than the next better hand can be given in parameter 'maxSize'.
 	 * @param bot : the winning bot
 	 * @param maxSize : the maximal amount of chips per players bet that goes to this winner, any value <= 0 is
 	 * interpreted as an unrestricted amount that may go to this player.
 	 */
+	/*
 	public int getWinnersPot(PokerBot bot, int maxSize)
 	{
 		int winnersBet = botBetSizes.get(bot);
@@ -76,7 +170,7 @@ public class Pot
 		
 		return winnersPot;
 	}
-	
+	*/
 	
 	/**
 	 * Calculates the amount of the pot that the given two winners receive. Returns an array of two integers pot sizes,
@@ -85,6 +179,7 @@ public class Pot
 	 * @param bot1 : The first winning bot
 	 * @param bot2 : The second winning bot
 	 */
+	/*
 	public int[] getTwoWinnersPot(PokerBot bot1, PokerBot bot2)
 	{
 		int difference = botBetSizes.get(bot1) - botBetSizes.get(bot2);
@@ -99,7 +194,7 @@ public class Pot
 		botPots[0] += mainPot - mainPotHalf;
 		return botPots;
 	}
-	
+	*/
 	
 	/**
 	 * Returns whether the pot is empty or not
@@ -146,7 +241,7 @@ public class Pot
 			}
 			
 			pots.add(currentPotSize);
-		}		
+		}
 		return pots;
 	}
 }

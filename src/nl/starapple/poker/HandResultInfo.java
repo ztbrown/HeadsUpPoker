@@ -46,7 +46,7 @@ public class HandResultInfo
 		for(int i = 0; i < bots.size(); i++)
 			if(potParts[i] > 0)
 				str += String.format("%s wins %d\n", bots.get(i).getName(), potParts[i]);
-		str.substring(0, str.length() - 1);
+		str = str.substring(0, str.length() - 1);
 		return str;
 	}
 }
