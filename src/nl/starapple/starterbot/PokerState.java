@@ -30,6 +30,8 @@ public class PokerState {
 	
 	private int lastPost = 0;
 	
+	private int[] sidepots;
+	
 	protected void updateSetting(String key, String value) {
 		settings.put(key, value);
 		if( key.equals("yourBot") ) {
@@ -50,6 +52,8 @@ public class PokerState {
 			pot = Integer.valueOf(value);
 		} else if( key.equals("table") ) {
 			table = parseCards(value);
+		} else if( key.equals("sidepots") ) {
+			sidepots = parsePots(value);
 		} else {
 			System.err.printf("Unknown match command: %s %s\n", key, value);
 		}
@@ -90,6 +94,17 @@ public class PokerState {
 				}
 			}
 		}
+	}
+
+	private int[] parsePots(String value) {
+		if( value.endsWith("]") ) { value = value.substring(0, value.length()-1); }
+		if( value.startsWith("[") ) { value = value.substring(1); }
+		String[] parts = value.split(",");
+		int[] pots = new int[parts.length];
+		for( int i = 0; i < parts.length; ++i ) {
+			pots[i] = Integer.valueOf(parts[i]);
+		}
+		return pots;
 	}
 
 	private Card[] parseCards(String value) {
@@ -149,6 +164,10 @@ public class PokerState {
 	
 	public String getSetting(String key) {
 		return settings.get(key);
+	}
+
+	public int[] getSidepots() {
+		return sidepots;
 	}
 
 }

@@ -148,7 +148,7 @@ public final class HandEval {
 	private static final int   RANK_SHIFT_2		= RANK_SHIFT_1 + 4;
 	private static final int   RANK_SHIFT_3		= RANK_SHIFT_2 + 4;
 	private static final int   RANK_SHIFT_4		= RANK_SHIFT_3 + 4;
-	private static final int   VALUE_SHIFT		= RANK_SHIFT_4 + 8;
+	public static final int    VALUE_SHIFT		= RANK_SHIFT_4 + 8;
 
 	private static final int   NO_PAIR			= 0;
 	private static final int   PAIR				= NO_PAIR			+ (1 << VALUE_SHIFT);
