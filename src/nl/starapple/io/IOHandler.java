@@ -19,7 +19,7 @@ public class IOHandler {
 	public void stop() {
 		try {
 			in.close();
-			Thread.sleep(100);
+			Thread.sleep(200);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
@@ -27,19 +27,20 @@ public class IOHandler {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 		}
+		child.destroy();
+		Thread.sleep(200);
 		out.finish();
 		err.finish();
-		child.destroy();
+		Thread.sleep(200);
+		if( out.isAlive() || err.isAlive() ) {
+			if( out.isAlive() ) { out.interrupt(); }
+			if( err.isAlive() ) { err.interrupt(); }
+			Thread.sleep(200);
+		}
 		try {
-			for( int i = 0; i < 3; ++i ) {
-				if( !isRunning() ) {
-					child.waitFor();
-					break;
-				}
-				Thread.sleep(150);
-			}
-			out.join();
-			err.join();
+			child.waitFor();
+			out.join(250);
+			err.join(250);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
