@@ -1,5 +1,10 @@
 package nl.starapple.poker;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 /**
  * Class that visualizes the replay of matches.
@@ -9,6 +14,7 @@ public class MatchViewer
 	private ArrayList<String> botNames;
 	
 	private final int[] chipValues = {1, 10, 100, 1000};
+	private final String[] chipColors = {"c1", "c2", "c3", "c4"};
 	
 	public MatchViewer()
 	{
@@ -45,7 +51,7 @@ public class MatchViewer
 	 * the amount of chips per chip value as listed in 'chipValues' from small to large.
 	 * @param chips : the number of chips to be represented
 	 */
-	private int[] calculateChipsImage(int chips)
+	private int[] calculateAmountPerChip(int chips)
 	{
 		int index = chipValues.length;
 		int[] chipsPerValue = new int[index--];
@@ -56,5 +62,23 @@ public class MatchViewer
 			chipsPerValue[index--] = number;
 		}
 		return chipsPerValue;
+	}
+	
+	private void drawChipPile(int chips, int xLoc, int yLoc)
+	{
+		int[] chipsPerValue = calculateAmountPerChip(chips);
+		BufferedImage piles[] = new BufferedImage[chipsPerValue.length];
+		for(int i = 0; i < chipsPerValue.length; i++)
+		{
+			String chipImage = String.format("chips_%s_%d.png", chipColors[i], chipsPerValue[i]);
+			try{ piles[i] = ImageIO.read(new File(chipImage));}
+			catch(IOException e){ e.printStackTrace(); }
+		}
+		
+		int shift = 0;
+		for(int i = 0; i < piles.length; i++)
+		{
+			
+		}
 	}
 }
