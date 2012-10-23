@@ -28,16 +28,24 @@ public class IOHandler {
 			//e.printStackTrace();
 		}
 		child.destroy();
-		Thread.sleep(200);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		out.finish();
 		err.finish();
-		Thread.sleep(200);
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if( out.isAlive() || err.isAlive() ) {
 			if( out.isAlive() ) { out.interrupt(); }
 			if( err.isAlive() ) { err.interrupt(); }
-			Thread.sleep(200);
 		}
 		try {
+			Thread.sleep(200);
 			child.waitFor();
 			out.join(250);
 			err.join(250);
