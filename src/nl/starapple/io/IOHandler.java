@@ -31,7 +31,13 @@ public class IOHandler {
 		err.finish();
 		child.destroy();
 		try {
-			child.waitFor();
+			for( int i = 0; i < 3; ++i ) {
+				if( !isRunning() ) {
+					child.waitFor();
+					break;
+				}
+				Thread.sleep(150);
+			}
 			out.join();
 			err.join();
 		} catch (InterruptedException e) {
