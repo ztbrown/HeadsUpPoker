@@ -368,7 +368,8 @@ public class MatchPlayer
 			}
 			
 			// send a message to all other bots about the action
-			handHistory += String.format("\n%s %s %d", bots.get(activeSeat).getName(), botAction, botActionAmount);
+			// handHistory += String.format("\n%s %s %d", bots.get(activeSeat).getName(), botAction, botActionAmount);
+			handHistory += String.format("\n%s %s %d", bots.get(activeSeat).getName(), botAction, botBetsThisRound[activeSeat]);
 			//System.out.println("|_| Total pot size: " + pot.getCurrentPotSize());
 			sendMoveInfo(botAction, botActionAmount);
 		}
