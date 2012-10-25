@@ -2,6 +2,7 @@ package nl.starapple.poker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Vector;
 
 import com.stevebrecher.HandEval;
@@ -75,7 +76,8 @@ public class MatchPlayer
 		tableCards = new Vector<Card>();
 		botHands = new Hand[numberOfBots];
 		handHistory = "";
-		buttonSeat = numberOfBots;
+		Random random = new Random();
+		buttonSeat = random.nextInt(numberOfBots);
 		activeSeat = 0;
 		isInvolvedInHand = new boolean[numberOfBots];
 		isInvolvedInMatch = new boolean[numberOfBots];
@@ -293,7 +295,7 @@ public class MatchPlayer
 			if(nextMove == null)
 			{
 				nextMove = new PokerMove("check", 0);
-				System.err.println(bots.get(activeSeat).getName() + " did not act in time, action set to \"check\"");
+				System.err.println("bot_" + activeSeat + " did not act in time, action set to \"check\"");
 			}
 		
 			
@@ -583,7 +585,7 @@ public class MatchPlayer
 									   HANDS_PER_BLINDLEVEL);		
 		for(int i = 0; i < numberOfBots; i++)
 		{
-			info.setCurrentBotInfo(bots.get(i));
+			info.setCurrentBotInfo(i);
 			bots.get(i).getBot().writeInfo(info);
 			botsReady[i] = false;
 		}		
@@ -627,7 +629,7 @@ public class MatchPlayer
 		}
 		for(int i = 0; i < numberOfBots; i++)
 		{
-			info.setCurrentBotInfo(bots.get(i), botHands[i]);
+			info.setCurrentBotInfo(i, botHands[i]);
 			bots.get(i).getBot().writeInfo(info);
 		}
 	}
@@ -641,7 +643,7 @@ public class MatchPlayer
 	private void sendMoveInfo(String action, int amount)
 	{
 		PokerMove move = new PokerMove(action, amount);
-		move.setPlayer(bots.get(activeSeat).getName());
+		move.setPlayer("bot_" + activeSeat);
 		for(int i = 0; i < numberOfBots; i++)
 			bots.get(i).getBot().writeMove(move);
 	}
@@ -660,7 +662,7 @@ public class MatchPlayer
 		{
 			for(int i = 0; i < numberOfBots; i++)
 				if(isInvolvedInHand[i])
-					resultInfo.setBotHand(bots.get(i), botHands[i]);
+					resultInfo.setBotHand(i, botHands[i]);
 		}
 		for(int i = 0; i < numberOfBots; i++)
 			bots.get(i).getBot().writeResult(resultInfo);

@@ -8,7 +8,7 @@ public class HandInfo
 	private ArrayList<PokerBot> bots;
 	private int[] botStacks;
 	private int sizeBB, sizeSB;
-	private PokerBot myBot;
+	private int mySeat;
 	private Hand myHand;
 	private int buttonSeat;
 	private String table;
@@ -33,11 +33,11 @@ public class HandInfo
 	 * Sets on which seat the bot is that receives this MatchInfo
 	 * @param botName : the name of the bot
 	 */
-	public void setCurrentBotInfo(PokerBot bot, Hand hand)
+	public void setCurrentBotInfo(int seat, Hand hand)
 	{
-		if(!bots.contains(bot))
+		if(seat >= bots.size() || seat < 0)
 			System.err.println("The given bot is not part of this match!");
-		myBot = bot;
+		mySeat = seat;
 		myHand = hand;
 	}
 	
@@ -50,7 +50,7 @@ public class HandInfo
 		String str = "";
 		
 		if(infoType.equals(HandInfoType.HAND_CARDS)) {
-			str += String.format("%s hand %s\n", myBot.getName(), myHand.toString());
+			str += String.format("bot_%d hand %s\n", mySeat, myHand.toString());
 		}
 		
 		if(infoType.equals(HandInfoType.HAND_START))
@@ -58,13 +58,13 @@ public class HandInfo
 			str += String.format("Match round %d\n", round);
 			str += String.format("Match smallBlind %d\n", sizeSB);
 			str += String.format("Match bigBlind %d\n", sizeBB);
-			str += String.format("Match onButton %s\n", bots.get(buttonSeat).getName());
+			str += String.format("Match onButton bot_%d\n", buttonSeat);
 		}
 		
 		if( infoType.equals(HandInfoType.PREMOVE_INFO) 
 			 || infoType.equals(HandInfoType.HAND_START) ) {
 			for(int i = 0; i < bots.size(); i++)
-				str += String.format("%s stack %d\n", bots.get(i).getName(), botStacks[i]);
+				str += String.format("bot_%d stack %d\n", i, botStacks[i]);
 		}
 		
 		if( infoType.equals(HandInfoType.NEW_BETROUND) ) {

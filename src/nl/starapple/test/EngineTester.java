@@ -1,4 +1,6 @@
-package nl.starapple.poker;
+package nl.starapple.test;
+
+import nl.starapple.poker.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -6,8 +8,8 @@ public class EngineTester {
 
 	public static void main(String[] args)
 	{		
-		PokerBot pbot1 = new PokerBot(new TestBotRandom(), "Bot_1", "Henkie");
-		PokerBot pbot2 = new PokerBot(new TestBotRandom(), "Bot_2", "Japie");
+		PokerBot pbot1 = new PokerBot(new TestBotRandom(), "Ivey");
+		PokerBot pbot2 = new PokerBot(new TestBotRandom(), "Durrr");
 		Collection<PokerBot> bots = new ArrayList<PokerBot>();
 		bots.add(pbot1);
 		bots.add(pbot2);

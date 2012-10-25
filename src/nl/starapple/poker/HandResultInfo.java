@@ -21,16 +21,12 @@ public class HandResultInfo
 	 * @param botName : the name of the bot
 	 * @param hand : the hand of the bot
 	 */
-	public void setBotHand(PokerBot bot, Hand hand)
+	public void setBotHand(int seat, Hand hand)
 	{
-		for(int i = 0; i < bots.size(); i++)
-		{
-			if(bots.get(i).equals(bot))
-			{
-				hands[i] = hand;
-				break;
-			}
-		}
+		if(seat >= bots.size() || seat < 0)
+			System.err.println("The given bot is not part of this match!");
+		
+		hands[seat] = hand;
 	}
 	
 	
@@ -42,10 +38,10 @@ public class HandResultInfo
 		String str = "";
 		for(int i = 0; i < bots.size(); i++)
 			if(hands[i] != null)
-				str += String.format("%s hand %s\n", bots.get(i).getName(), hands[i].toString());
+				str += String.format("bot_%d hand %s\n", i, hands[i].toString());
 		for(int i = 0; i < bots.size(); i++)
 			if(potParts[i] > 0)
-				str += String.format("%s wins %d\n", bots.get(i).getName(), potParts[i]);
+				str += String.format("bot_%d wins %d\n", i, potParts[i]);
 		str = str.substring(0, str.length() - 1);
 		return str;
 	}

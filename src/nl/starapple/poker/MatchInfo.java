@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class MatchInfo
 {
 	private ArrayList<PokerBot> bots;
-	private PokerBot myBot;
+	private int mySeat;
 	private String gameType;
 	private String gameMode;
 	private int timeBank;
@@ -31,11 +31,11 @@ public class MatchInfo
 	 * Sets on which seat the bot is that receives this MatchInfo
 	 * @param botName : the name of the bot
 	 */
-	public void setCurrentBotInfo(PokerBot bot)
+	public void setCurrentBotInfo(int seat)
 	{
-		if(!bots.contains(bot))
+		if(seat >= bots.size() || seat < 0)
 			System.err.println("The given bot is not part of this match!");
-		myBot = bot;
+		mySeat = seat;
 	}
 	
 	
@@ -49,9 +49,9 @@ public class MatchInfo
 		str += String.format("\nSettings timeBank %d", timeBank);
 		str += String.format("\nSettings timePerMove %d", timePerMove);
 		str += String.format("\nSettings handsPerLevel %d", handsPerLevel);
-		str += String.format("\nSettings yourBot %s", myBot.getName());
+		str += String.format("\nSettings yourBot bot_%d", mySeat);
 		for(int i = 0; i < bots.size(); i++)
-			str += String.format("\n%s seat %d", bots.get(i).getName(), i);
+			str += String.format("\nbot_%d seat %d", i, i);
 		
 		return str;
 	}
