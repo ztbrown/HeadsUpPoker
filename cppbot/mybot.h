@@ -3,6 +3,8 @@
 
 #include "HandEval.h"
 
+#define MAX_SIDEPOTS 8
+
 struct PokerSettings {
     const char *gametype, *gamemode;
     const char *myname;
@@ -32,6 +34,7 @@ struct PokerState {
     Hand_T board;
     int boardsize;
     int potsize, currentbet;
+    int sidepot[MAX_SIDEPOTS], sidepots;
     long timeout;
 };
 

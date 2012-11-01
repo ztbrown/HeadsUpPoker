@@ -16,6 +16,7 @@ static Hand_T parse_card(const char *str);
 static int count_cards(Hand_T cards);
 static Eval_T get_handstrength(Hand_T cards1, Hand_T cards2);
 static void player_store_handstrength(struct PokerState *state, struct PokerPlayer *player);
+static int parse_pots(const char *str, int *pot, int maxpots);
 
 int main() {
     char buf[100];
@@ -46,20 +47,7 @@ int main() {
                 fprintf(stderr, "WARN: ``%s'' does not match villain name ``%s''\n", part[0], player->name);
             } else {
                 parse_playerinfo(part[1], part[2], player);
-                if( strcmp(part[1], "check") == 0 ||
-                        strcmp(part[1], "call") == 0 ) {
-                    state.currentbet = 0;
-                } else if( strcmp(part[1], "raise") == 0 ) {
-                    state.currentbet = player->lastamount;
-                } else if( strcmp(part[1], "post") == 0 ) {
-                    /*
-                     * this will make sure that currentbet is
-                     * bigblind-smallblind, which is the amount
-                     * to call, since currentbet is set to 0 when
-                     * we get ``Match round x''
-                     */
-                    state.currentbet = player->lastamount - state.currentbet;
-                } else if( strcmp(part[1], "hand") == 0 ) {
+                if( strcmp(part[1], "hand") == 0 ) {
                     player_store_handstrength(&state, player);
                 }
             }
@@ -120,7 +108,8 @@ static void parse_setting(const char *key, const char *value, struct PokerSettin
 static void parse_matchinfo(const char *key, const char *value, struct PokerState *state) {
     if( strcmp(key, "round") == 0 ) {
         state->info.round = atoi(value);
-        state->currentbet = 0;
+        state->boardsize = 0;
+        state->sidepots = 0;
     } else if( strcmp(key, "smallBlind") == 0 ) {
         state->info.smallblind = atoi(value);
     } else if( strcmp(key, "bigBlind") == 0 ) {
@@ -130,6 +119,12 @@ static void parse_matchinfo(const char *key, const char *value, struct PokerStat
     } else if( strcmp(key, "table") == 0 ) {
         state->board = parse_cards(value);
         state->boardsize = count_cards(state->board);
+    } else if( strcmp(key, "sidepots") == 0 ) {
+        state->currentbet = 0;
+        state->sidepots = parse_pots(value, state->sidepot, MAX_SIDEPOTS);
+        if( state->sidepots > 0 ) {
+            state->currentbet = state->sidepot[0];
+        }
     } else if( strcmp(key, "onButton") == 0 ) {
         if( state->settings.myname == NULL ) {
             fprintf(stderr, "WARN: got ``onButton'', but don't know my name yet\n");
@@ -196,6 +191,19 @@ static Hand_T parse_cards(const char *str) {
         AddHandTo(result, card);
     }
     return result;
+}
+
+static int parse_pots(const char *str, int *pot, int maxpots) {
+    if( str[0] != '[' ) {
+        fprintf(stderr, "WARN: cannot parse sidepots string ``%s''\n", str);
+        return 0;
+    }
+    char *s = (char*)str+1;
+    int pots = 0;
+    while( pots < maxpots && *s != ']' ) {
+        pot[pots++] = (int) strtol(s, &s, 10);
+    }
+    return pots;
 }
 
 static int count_cards(Hand_T cards) {

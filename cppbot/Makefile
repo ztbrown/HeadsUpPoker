@@ -1,5 +1,8 @@
 all: bot
 
+clean:
+	rm -f bot *.o
+
 bot: main.o mybot.o HandEval.o
 	$(CC) -o $@ $(CFLAGS) $^
 
