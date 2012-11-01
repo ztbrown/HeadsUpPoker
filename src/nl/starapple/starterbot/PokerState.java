@@ -28,8 +28,6 @@ public class PokerState {
 	
 	private String myName = "";
 	
-	private int lastPost = 0;
-	
 	private int[] sidepots;
 	
 	protected void updateSetting(String key, String value) {
@@ -42,6 +40,7 @@ public class PokerState {
 	protected void updateMatch(String key, String value) {
 		if( key.equals("round") ) {
 			round = Integer.valueOf(value);
+            table = new Card[0];
 		} else if( key.equals("smallBlind") ) {
 			smallBlind = Integer.valueOf(value);
 		} else if( key.equals("bigBlind") ) {
@@ -54,6 +53,7 @@ public class PokerState {
 			table = parseCards(value);
 		} else if( key.equals("sidepots") ) {
 			sidepots = parsePots(value);
+            currentBet = ( sidepots.length > 0 ) ? sidepots[0] : 0;
 		} else {
 			System.err.printf("Unknown match command: %s %s\n", key, value);
 		}
@@ -69,8 +69,6 @@ public class PokerState {
 				Card[] cards = parseCards(amount);
 				assert( cards.length == 2 ) : String.format("Did not receive two cards, instead: ``%s''", amount);
 				hand = new Hand(cards[0], cards[1]);
-			} else if( move.equals("post") ) {
-				lastPost = Integer.valueOf(amount);
 			} else {
 				// assume someone made some move
 			}
@@ -78,20 +76,8 @@ public class PokerState {
 			// assume it's the (only) villain
 			if( move.equals("stack") ) {
 				opponentStack = Integer.valueOf(amount);
-			} else if( move.equals("call") ) {
-				currentBet = 0;
-				opponentAction = "call";
-			} else if( move.equals("post") ) {
-				currentBet = Integer.valueOf(amount) - lastPost;
-				opponentAction = "post";
 			} else {
-				// assume he made some agressive move
-				try {
-					currentBet = Integer.valueOf(amount);
-					opponentAction = move;
-				} catch( NumberFormatException e ) {
-					System.err.printf("Unable to parse line ``%s %s %s''\n", bot, move, amount);
-				}
+                opponentAction = move;
 			}
 		}
 	}
