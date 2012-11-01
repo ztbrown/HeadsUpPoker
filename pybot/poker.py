@@ -70,16 +70,16 @@ class Poker(object):
         sidepots = Poker.split_list(self.get_match_info('sidepots'))
         if len(sidepots) == 0:
             return 0
-        return int(sidepots[-1])
+        return int(sidepots[0])
     
     def get_hand(self, player):
         return self.hand[player]
     
     def my_hand(self):
-        return self.get_hand(self.my_name())
+        return Poker.split_list(self.get_hand(self.my_name()))
     
     def table_cards(self):
-        return self.get_match_info('table')
+        return Poker.split_list(self.get_match_info('table'))
 
     def run(self, bot):
         '''
@@ -107,6 +107,8 @@ class Poker(object):
                     self.setting[parts[1]] = parts[2]
                 elif parts[0] == 'Match':
                     self.match_info[parts[1]] = parts[2]
+                    if parts[1] == 'round':
+                        self.match_info['table'] = '[]'
                 elif parts[1] == 'stack':
                     self.stack[parts[0]] = int(parts[2])
                 elif parts[1] == 'hand':
