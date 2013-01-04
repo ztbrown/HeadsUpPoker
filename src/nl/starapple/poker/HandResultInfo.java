@@ -25,8 +25,8 @@ public class HandResultInfo
 	{
 		if(seat >= bots.size() || seat < 0)
 			System.err.println("The given bot is not part of this match!");
-		
-		hands[seat] = hand;
+		else
+			hands[seat] = hand;
 	}
 	
 	

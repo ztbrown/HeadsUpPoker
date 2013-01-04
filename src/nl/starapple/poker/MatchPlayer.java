@@ -511,6 +511,7 @@ public class MatchPlayer
 				botHandStrengths.put(bots.get(i), HandEval.hand7Eval(playerCombinationCode));
 			}
 		}
+		int numberOfBotsOnShowdown = botHandStrengths.size();
 			
 		Pot.PayoutWinnerInfo winnerInfo = pot.payoutWinners(botHandStrengths);
 		ArrayList<Integer> potParts = winnerInfo.getPots();
@@ -556,7 +557,7 @@ public class MatchPlayer
 		{
 			botStacks[i] += winPerBot[i];
 		}
-		sendResultInfo(winPerBot, botHandStrengths.size() > 1);
+		sendResultInfo(winPerBot, numberOfBotsOnShowdown > 1);
 	}
 	
 	
