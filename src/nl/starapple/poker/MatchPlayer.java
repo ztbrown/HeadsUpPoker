@@ -591,6 +591,7 @@ public class MatchPlayer
 			botsReady[i] = false;
 		}		
 		
+        /*
 		Thread[] setupThreads = new Thread[numberOfBots];
 		for(int i = 0; i < numberOfBots; i++)
 		{
@@ -610,6 +611,7 @@ public class MatchPlayer
 			try{ setupThreads[i].join(); }
 				catch(InterruptedException e){ e.printStackTrace(); }
 		}
+        */
 	}
 	
 	
